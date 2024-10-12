@@ -655,18 +655,58 @@
 ;;; ADMINISTRATION
 
 ;; Bind org agenda command and custom agenda
-
 (use-package org
   :custom
   (org-agenda-custom-commands
-   '(("e" "Agenda, next actions and waiting"
+   '(
+     ("e" "Agenda, next actions and waiting"
       ((agenda "" ((org-agenda-overriding-header "Next three days:")
                    (org-agenda-span 3)
                    (org-agenda-start-on-weekday nil)))
        (todo "NEXT" ((org-agenda-overriding-header "Next Actions:")))
-       (todo "WAIT" ((org-agenda-overriding-header "Waiting:")))))))
+       (todo "WAIT" ((org-agenda-overriding-header "Waiting:")))))
+
+     ("d" "Events" agenda "display deadlines and exclude scheduled" (
+								     (org-agenda-span 'week)
+								     (org-agenda-time-grid nil)
+								     (org-agenda-show-all-dates nil)
+								     (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
+								     (org-deadline-warning-days 0) ))
+
+     (  "c" "Completed by week"
+	agenda ""
+	((org-agenda-span 'week)
+	 (org-agenda-start-on-weekday 1)
+	 (org-agenda-start-with-log-mode t)
+	 (org-agenda-skip-function
+          '(org-agenda-skip-entry-if 'nottodo 'done))
+	 ))
+
+     ("w" "Events" agenda "display week" (
+					;                                                                (org-agenda-span 'week)
+					;                                                                (org-agenda-time-grid nil)
+                                          (org-agenda-show-all-dates nil)
+                                          (tags "week")
+                                          (org-deadline-warning-days 0) ))
+     )
+   )
   :bind
   (("C-c a" . org-agenda)))
+
+;; (use-package org
+;;   :custom
+;;   (org-agenda-custom-commands
+;;    '(("e" "Agenda, next actions and waiting"
+;;       ((agenda "" ((org-agenda-overriding-header "Next three days:")
+;;                    (org-agenda-span 3)
+;;                    (org-agenda-start-on-weekday nil)))
+;;        (todo "NEXT" ((org-agenda-overriding-header "Next Actions:")))
+;;        (todo "WAIT" ((org-agenda-overriding-header "Waiting:")))))
+
+
+;;      ))
+;;   :bind
+;;   (("C-c a" . org-agenda)))
 
 ;; FILE MANAGEMENT
 
