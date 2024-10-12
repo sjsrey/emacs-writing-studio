@@ -391,7 +391,30 @@
   :custom
   (openwith-associations nil))
 
-;; Fleeting notes
+; Fleeting notes
+
+;; (use-package org
+;;   :bind
+;;   (("C-c c" . org-capture)
+;;    ("C-c l" . org-store-link))
+;;   :custom
+;;   (org-goto-interface 'outline-path-completion)
+;;   (org-capture-templates
+;;    '(("f" "Fleeting note"
+;;       item
+;;       (file+headline org-default-notes-file "Notes")
+;;       "- %?")
+;;      ("p" "Permanent note" plain
+;;       (file denote-last-path)
+;;       #'denote-org-capture
+;;       :no-save t
+;;       :immediate-finish nil
+;;       :kill-buffer t
+;;       :jump-to-captured t)
+;;      ("t" "New task" entry
+;;       (file+headline org-default-notes-file "Tasks")
+;;       "* TODO %i%?"))))
+
 
 (use-package org
   :bind
@@ -400,10 +423,17 @@
   :custom
   (org-goto-interface 'outline-path-completion)
   (org-capture-templates
-   '(("f" "Fleeting note"
+   '(
+     ("e" "Current file log entry" entry (file+olp+datetree buffer-file-name)
+      "* %? \n%u")
+     ("f" "Fleeting note"
       item
       (file+headline org-default-notes-file "Notes")
       "- %?")
+     ("F" "Fleeting note"
+      entry
+      (file+headline "~/Documents/org/gtd.org" "Notes")
+      "* %?\nCaptured on %U\n")
      ("p" "Permanent note" plain
       (file denote-last-path)
       #'denote-org-capture
@@ -411,9 +441,18 @@
       :immediate-finish nil
       :kill-buffer t
       :jump-to-captured t)
-     ("t" "New task" entry
-      (file+headline org-default-notes-file "Tasks")
-      "* TODO %i%?"))))
+     ("w" "Review: Weekly Review" entry (file+olp+datetree "~/Documents/org/reviews.org")
+      (file "~/Documents/org/tpl-review.txt")
+      :after-finalize (lambda () (find-file "~/Documents/org/reviews.org"))
+      )
+     ("p" "Protocol" entry (file+headline "~/Documents/org/gtd.org" "5_Inbox")
+      "* TODO %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
+     ("L" "Protocol Link" entry (file+headline "~/Documents/org/gtd.org" "5_Inbox")
+      "* TODO %? \n[[%:link][%:description]] \nCaptured On: %U")
+     ("t" "todo" entry (file+headline "~/Documents/org/gtd.org" "5_Inbox")
+      "* TODO  %?\n \n%a\n")
+     )))
+
 
 ;; Denote
 
