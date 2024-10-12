@@ -727,10 +727,28 @@
                                           (org-agenda-show-all-dates nil)
                                           (tags "week")
                                           (org-deadline-warning-days 0) ))
+     ("N" . "Next granular")
+     ("Nb" tags-todo "+TODO=\"NEXT\"+boo")
+     ("Nc" tags-todo "+TODO=\"NEXT\"+cou")
+     ("Nd" tags-todo "+TODO=\"NEXT\"+dev")
+     ("Ne" tags-todo "+TODO=\"NEXT\"+emacs")
+     ("Ng" tags-todo "+TODO=\"NEXT\"+gra")
+     ("Nh" tags-todo "+TODO=\"NEXT\"+human")
+     ("Np" tags-todo "+TODO=\"NEXT\"+pap")
+     ("NP" tags-todo "+TODO=\"NEXT\"+pro")
+     ("Ns" tags-todo "+TODO=\"NEXT\"+ser")
+     ("Nt" tags-todo "+TODO=\"NEXT\"+adv")
+     
      )
    )
   :bind
   (("C-c a" . org-agenda)))
+
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
+        (sequence "BACKLOG(b)" "PLAN(p)" "READY(r)" "ACTIVE(a)" "REVIEW(v)" "WAIT(w@/!)" "HOLD(h)" "|" "COMPLETED(c)" "CANC(k@)")))
+
+
 
 ;; (use-package org
 ;;   :custom
@@ -844,20 +862,21 @@
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
 (setq org-agenda-files
-                      '("~/Documents/org/tasks/books.org"
-                 "~/Documents/org/tasks/cogs.org"
-                 "~/Documents/org/tasks/development.org"
-                 "~/Documents/org/tasks/family.org"
-                 "~/Documents/org/tasks/grants.org"
-                 "~/Documents/org/tasks/manuscripts.org"
-                 "~/Documents/org/tasks/proposals.org"
-                 "~/Documents/org/tasks/reviews.org"
-                 "~/Documents/org/tasks/reyos.org"
-                 "~/Documents/org/tasks/service.org"
-                 "~/Documents/org/tasks/talks.org"
-                 "~/Documents/org/tasks/teaching.org"
-                 "~/Documents/org/habits.org"
-                 ))
+      '("~/Documents/org/tasks/books.org"
+        "~/Documents/org/tasks/cogs.org"
+        "~/Documents/org/tasks/development.org"
+	"~/Documents/org/tasks/emacs.org"
+        "~/Documents/org/tasks/family.org"
+        "~/Documents/org/tasks/grants.org"
+        "~/Documents/org/tasks/manuscripts.org"
+        "~/Documents/org/tasks/proposals.org"
+        "~/Documents/org/tasks/reviews.org"
+        "~/Documents/org/tasks/reyos.org"
+        "~/Documents/org/tasks/service.org"
+        "~/Documents/org/tasks/talks.org"
+        "~/Documents/org/tasks/teaching.org"
+        "~/Documents/org/habits.org"
+        ))
 
 
 ;hydras
@@ -871,6 +890,7 @@
     _b_ books
     _c_ cogs
     _d_ development
+    _e_ emacs
     _f_ family
     _g_ grants
     _l_ teaching
@@ -887,6 +907,7 @@
   ("b" (find-file "/Users/serge/Documents/org/tasks/books.org"))
   ("c" (find-file "/Users/serge/Documents/org/tasks/cogs.org"))
   ("d" (find-file "/Users/serge/Documents/org/tasks/development.org"))
+  ("e" (find-file "/Users/serge/Documents/org/tasks/emacs.org"))
   ("f" (find-file "/Users/serge/Documents/org/tasks/family.org"))
   ("g" (find-file "/Users/serge/Documents/org/tasks/grants.org"))
   ("l" (find-file "/Users/serge/Documents/org/tasks/teaching.org"))
