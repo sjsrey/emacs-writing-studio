@@ -745,3 +745,144 @@
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((dot . t))) ; this line activates GraophViz dot
+
+
+;; SJR Customizations
+
+;;; fixing
+;;; insert-directory: Listing directory failed but ‘access-file’ worked
+(when (eq system-type 'darwin)
+ (setq insert-directory-program "/opt/homebrew/bin/gls"))
+
+;org
+(setq org-refile-targets  '((org-agenda-files :maxlevel . 5))
+         )
+(setq org-log-done 'time)
+
+(setq org-agenda-files
+                      '("~/Documents/org/tasks/books.org"
+                 "~/Documents/org/tasks/cogs.org"
+                 "~/Documents/org/tasks/development.org"
+                 "~/Documents/org/tasks/family.org"
+                 "~/Documents/org/tasks/grants.org"
+                 "~/Documents/org/tasks/manuscripts.org"
+                 "~/Documents/org/tasks/proposals.org"
+                 "~/Documents/org/tasks/reviews.org"
+                 "~/Documents/org/tasks/reyos.org"
+                 "~/Documents/org/tasks/service.org"
+                 "~/Documents/org/tasks/talks.org"
+                 "~/Documents/org/tasks/teaching.org"
+                 "~/Documents/org/habits.org"
+                 ))
+
+
+;hydras
+(use-package hydra
+  :defer t)
+(defhydra hydra-jump-to-project-vertical (:hint nil)
+ "
+  ^
+    ^Projects
+    ^─────────-----
+    _b_ books
+    _c_ cogs
+    _d_ development
+    _f_ family
+    _g_ grants
+    _l_ teaching
+    _m_ manuscripts
+    _o_ reyos
+    _p_ proposals
+    _r_ reviews
+    _s_ service
+    _t_ talks
+
+    _q_ quit
+    ^────────-----
+    "
+  ("b" (find-file "/Users/serge/Documents/org/tasks/books.org"))
+  ("c" (find-file "/Users/serge/Documents/org/tasks/cogs.org"))
+  ("d" (find-file "/Users/serge/Documents/org/tasks/development.org"))
+  ("f" (find-file "/Users/serge/Documents/org/tasks/family.org"))
+  ("g" (find-file "/Users/serge/Documents/org/tasks/grants.org"))
+  ("l" (find-file "/Users/serge/Documents/org/tasks/teaching.org"))
+  ("m" (find-file "/Users/serge/Documents/org/tasks/manuscripts.org"))
+  ("o" (find-file "/Users/serge/Documents/org/tasks/reyos.org"))
+  ("p" (find-file "/Users/serge/Documents/org/tasks/proposals.org"))
+  ("r" (find-file "/Users/serge/Documents/org/tasks/reviews.org"))
+  ("s" (find-file "/Users/serge/Documents/org/tasks/service.org"))
+  ("t" (find-file "/Users/serge/Documents/org/tasks/talks.org"))
+
+  ("q" nil :color blue)) ; Add :color blue
+
+(global-set-key (kbd "C-c 1") 'hydra-jump-to-project-vertical/body)
+
+
+
+; spelling
+; Set Hunspell as the spell checker program
+(setq ispell-program-name "hunspell")
+
+;; Set the default dictionary to en_US
+(setq ispell-dictionary "en_US")
+
+; Set the personal dictionary to use the en_US files in ~/Library/Spelling
+(setq ispell-personal-dictionary "~/Library/Spelling/en_US")
+
+; dired listing dot files
+(setq insert-directory-program "/opt/homebrew/bin/gls")  ;; Adjust path if needed
+(setq dired-listing-switches "-alh")
+
+; backup
+(setq backup-directory-alist
+        `(("." . ,(concat user-emacs-directory "backups"))))
+
+;; yasnippet
+
+(require 'yasnippet)
+(yas-global-mode 1) ; Enable yasnippet in all buffers
+(use-package yasnippet
+  :config
+  ;; my python-mode snippets will be in ~/.emacs/snippets/python-mode
+  (add-to-list 'yas-snippet-dirs (expand-file-name "~/.emacs.d/etc/snippets"))
+
+   :requires yasnippet)
+(add-hook 'emacs-startup-hook (lambda () (yas-load-directory "/Users/serge/.emacs.d/etc/snippets")))
+
+;; org-download
+(require 'org-download)
+
+;; Drag-and-drop to `dired`
+(add-hook 'dired-mode-hook 'org-download-enable)
+
+
+;; dictionary
+;https://irreal.org/blog/?p=10824
+(setq dictionary-server "dict.org")
+
+;; denote
+
+(setq denote-directory (expand-file-name "~/Documents/notes/"))
+
+;; magit
+
+(use-package magit
+    :commands magit-status
+    :custom
+    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+  ;; NOTE: Make sure to configure a GitHub token before using this package!
+  ;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
+  ;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
+  (use-package forge
+    :after magit)
+(remove-hook 'server-switch-hook 'magit-commit-diff)
+(remove-hook 'with-editor-filter-visit-hook 'magit-commit-diff)
+
+;; attempting to speed things up https://magit.vc/manual/magit/Performance.html
+(setq magit-refresh-status-buffer nil)
+
+
+(setq auto-revert-buffer-list-filter
+      'magit-auto-revert-repository-buffer-p)
+
