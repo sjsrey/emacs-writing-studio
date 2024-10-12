@@ -759,6 +759,11 @@
          )
 (setq org-log-done 'time)
 
+(use-package org-bullets
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
 (setq org-agenda-files
                       '("~/Documents/org/tasks/books.org"
                  "~/Documents/org/tasks/cogs.org"
