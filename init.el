@@ -991,3 +991,9 @@
 (setq auto-revert-buffer-list-filter
       'magit-auto-revert-repository-buffer-p)
 
+;; orderless
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
