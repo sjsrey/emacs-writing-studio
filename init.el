@@ -904,19 +904,19 @@
     _q_ quit
     ^────────-----
     "
-  ("b" (find-file "/Users/serge/Documents/org/tasks/books.org"))
-  ("c" (find-file "/Users/serge/Documents/org/tasks/cogs.org"))
-  ("d" (find-file "/Users/serge/Documents/org/tasks/development.org"))
-  ("e" (find-file "/Users/serge/Documents/org/tasks/emacs.org"))
-  ("f" (find-file "/Users/serge/Documents/org/tasks/family.org"))
-  ("g" (find-file "/Users/serge/Documents/org/tasks/grants.org"))
-  ("l" (find-file "/Users/serge/Documents/org/tasks/teaching.org"))
-  ("m" (find-file "/Users/serge/Documents/org/tasks/manuscripts.org"))
-  ("o" (find-file "/Users/serge/Documents/org/tasks/reyos.org"))
-  ("p" (find-file "/Users/serge/Documents/org/tasks/proposals.org"))
-  ("r" (find-file "/Users/serge/Documents/org/tasks/reviews.org"))
-  ("s" (find-file "/Users/serge/Documents/org/tasks/service.org"))
-  ("t" (find-file "/Users/serge/Documents/org/tasks/talks.org"))
+  ("b" (find-file "/home/serge/Documents/org/tasks/books.org"))
+  ("c" (find-file "/home/serge/Documents/org/tasks/cogs.org"))
+  ("d" (find-file "/home/serge/Documents/org/tasks/development.org"))
+  ("e" (find-file "/home/serge/Documents/org/tasks/emacs.org"))
+  ("f" (find-file "/home/serge/Documents/org/tasks/family.org"))
+  ("g" (find-file "/home/serge/Documents/org/tasks/grants.org"))
+  ("l" (find-file "/home/serge/Documents/org/tasks/teaching.org"))
+  ("m" (find-file "/home/serge/Documents/org/tasks/manuscripts.org"))
+  ("o" (find-file "/home/serge/Documents/org/tasks/reyos.org"))
+  ("p" (find-file "/home/serge/Documents/org/tasks/proposals.org"))
+  ("r" (find-file "/home/serge/Documents/org/tasks/reviews.org"))
+  ("s" (find-file "/home/serge/Documents/org/tasks/service.org"))
+  ("t" (find-file "/home/serge/Documents/org/tasks/talks.org"))
 
   ("q" nil :color blue)) ; Add :color blue
 
@@ -935,7 +935,7 @@
 (setq ispell-personal-dictionary "~/Library/Spelling/en_US")
 
 ; dired listing dot files
-(setq insert-directory-program "/opt/homebrew/bin/gls")  ;; Adjust path if needed
+; (setq insert-directory-program "/opt/homebrew/bin/gls")  ;; Adjust path if needed
 (setq dired-listing-switches "-alh")
 
 ; backup
@@ -949,10 +949,10 @@
 (use-package yasnippet
   :config
   ;; my python-mode snippets will be in ~/.emacs/snippets/python-mode
-  (add-to-list 'yas-snippet-dirs (expand-file-name "~/.emacs.d/etc/snippets"))
+  (add-to-list 'yas-snippet-dirs (expand-file-name "~/.emacs.d/etc/yasnippet/snippets"))
 
    :requires yasnippet)
-(add-hook 'emacs-startup-hook (lambda () (yas-load-directory "/Users/serge/.emacs.d/etc/snippets")))
+(add-hook 'emacs-startup-hook (lambda () (yas-load-directory "/home/serge/.emacs.d/etc/yasnippet/snippets")))
 
 ;; org-download
 (require 'org-download)
