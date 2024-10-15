@@ -121,7 +121,7 @@
   (modus-themes-to-toggle
    '(modus-operandi-tinted modus-vivendi-tinted))
   :init
-  (load-theme 'modus-operandi-tinted :no-confirm)
+  (load-theme 'modus-vivendi-tinted :no-confirm)
   :bind
   (("C-c w t t" . modus-themes-toggle)
    ("C-c w t m" . modus-themes-select)
