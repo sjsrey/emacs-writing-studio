@@ -121,7 +121,7 @@
   (modus-themes-to-toggle
    '(modus-operandi-tinted modus-vivendi-tinted))
   :init
-  (load-theme 'modus-operandi-tinted :no-confirm)
+  (load-theme 'modus-vivendi-tinted :no-confirm)
   :bind
   (("C-c w t t" . modus-themes-toggle)
    ("C-c w t m" . modus-themes-select)
@@ -426,10 +426,6 @@
    '(
      ("e" "Current file log entry" entry (file+olp+datetree buffer-file-name)
       "* %? \n%u")
-     ("f" "Fleeting note"
-      item
-      (file+headline org-default-notes-file "Notes")
-      "- %?")
      ("F" "Fleeting note"
       entry
       (file+headline "~/Documents/org/gtd.org" "Notes")
@@ -947,7 +943,6 @@
 (setq ispell-personal-dictionary "~/Library/Spelling/en_US")
 
 ; dired listing dot files
-;(setq insert-directory-program "/opt/homebrew/bin/gls")  ;; Adjust path if needed
 (setq dired-listing-switches "-alh")
 
 ; backup
@@ -1031,3 +1026,15 @@
 (use-package quarto-mode
   :mode (("\\.Rmd" . poly-quarto-mode))
   )
+;; silence is golden
+(setq ring-bell-function 'ignore)
+
+
+;; projectile
+(use-package projectile
+  :ensure t
+  :init
+  (projectile-mode +1)
+  :bind (:map projectile-mode-map
+              ("s-p" . projectile-command-map)
+              ("C-c p" . projectile-command-map)))
