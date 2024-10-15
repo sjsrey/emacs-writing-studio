@@ -738,6 +738,18 @@
      ("NP" tags-todo "+TODO=\"NEXT\"+pro")
      ("Ns" tags-todo "+TODO=\"NEXT\"+ser")
      ("Nt" tags-todo "+TODO=\"NEXT\"+adv")
+     ("A" . "A granular")
+     ("Aa" tags-todo "+PRIORITY=\"A\"")
+     ("Aw" tags-todo "+PRIORITY=\"A\"+pap")
+     ("Ab" tags-todo "+PRIORITY=\"A\"+bo")
+     ("Ag" tags-todo "+PRIORITY=\"A\"+gra")
+     ("Ac" tags-todo "+PRIORITY=\"A\"+dev")
+     ("Ah" tags-todo "+PRIORITY=\"A\"+human")  
+     ("AP" tags-todo "+PRIORITY=\"A\"++pro")
+     ("As" tags-todo "+PRIORITY=\"A\"+ser")
+     ("At" tags-todo "+PRIORITY=\"A\"+cou")
+     ("AA" tags-todo "+PRIORITY=\"A\"+adv")
+     ("Af" tags-todo "+PRIORITY=\"A\"+personal")
      
      )
    )
@@ -848,18 +860,18 @@
 
 ;;; fixing
 ;;; insert-directory: Listing directory failed but ‘access-file’ worked
-(when (eq system-type 'darwin)
- (setq insert-directory-program "/opt/homebrew/bin/gls"))
+;(when (eq system-type 'darwin)
+; (setq insert-directory-program "/opt/homebrew/bin/gls"))
 
 ;org
 (setq org-refile-targets  '((org-agenda-files :maxlevel . 5))
          )
 (setq org-log-done 'time)
 
-(use-package org-bullets
-  :ensure t
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+;; (use-package org-bullets
+;;   :ensure t
+;;   :config
+;;   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
 (setq org-agenda-files
       '("~/Documents/org/tasks/books.org"
@@ -904,19 +916,19 @@
     _q_ quit
     ^────────-----
     "
-  ("b" (find-file "/Users/serge/Documents/org/tasks/books.org"))
-  ("c" (find-file "/Users/serge/Documents/org/tasks/cogs.org"))
-  ("d" (find-file "/Users/serge/Documents/org/tasks/development.org"))
-  ("e" (find-file "/Users/serge/Documents/org/tasks/emacs.org"))
-  ("f" (find-file "/Users/serge/Documents/org/tasks/family.org"))
-  ("g" (find-file "/Users/serge/Documents/org/tasks/grants.org"))
-  ("l" (find-file "/Users/serge/Documents/org/tasks/teaching.org"))
-  ("m" (find-file "/Users/serge/Documents/org/tasks/manuscripts.org"))
-  ("o" (find-file "/Users/serge/Documents/org/tasks/reyos.org"))
-  ("p" (find-file "/Users/serge/Documents/org/tasks/proposals.org"))
-  ("r" (find-file "/Users/serge/Documents/org/tasks/reviews.org"))
-  ("s" (find-file "/Users/serge/Documents/org/tasks/service.org"))
-  ("t" (find-file "/Users/serge/Documents/org/tasks/talks.org"))
+  ("b" (find-file "/home/serge/Documents/org/tasks/books.org"))
+  ("c" (find-file "/home/serge/Documents/org/tasks/cogs.org"))
+  ("d" (find-file "/home/serge/Documents/org/tasks/development.org"))
+  ("e" (find-file "/home/serge/Documents/org/tasks/emacs.org"))
+  ("f" (find-file "/home/serge/Documents/org/tasks/family.org"))
+  ("g" (find-file "/home/serge/Documents/org/tasks/grants.org"))
+  ("l" (find-file "/home/serge/Documents/org/tasks/teaching.org"))
+  ("m" (find-file "/home/serge/Documents/org/tasks/manuscripts.org"))
+  ("o" (find-file "/home/serge/Documents/org/tasks/reyos.org"))
+  ("p" (find-file "/home/serge/Documents/org/tasks/proposals.org"))
+  ("r" (find-file "/home/serge/Documents/org/tasks/reviews.org"))
+  ("s" (find-file "/home/serge/Documents/org/tasks/service.org"))
+  ("t" (find-file "/home/serge/Documents/org/tasks/talks.org"))
 
   ("q" nil :color blue)) ; Add :color blue
 
@@ -935,7 +947,7 @@
 (setq ispell-personal-dictionary "~/Library/Spelling/en_US")
 
 ; dired listing dot files
-(setq insert-directory-program "/opt/homebrew/bin/gls")  ;; Adjust path if needed
+;(setq insert-directory-program "/opt/homebrew/bin/gls")  ;; Adjust path if needed
 (setq dired-listing-switches "-alh")
 
 ; backup
@@ -949,10 +961,10 @@
 (use-package yasnippet
   :config
   ;; my python-mode snippets will be in ~/.emacs/snippets/python-mode
-  (add-to-list 'yas-snippet-dirs (expand-file-name "~/.emacs.d/etc/snippets"))
+  (add-to-list 'yas-snippet-dirs (expand-file-name "~/.emacs.d/etc/yasnippet/snippets"))
 
    :requires yasnippet)
-(add-hook 'emacs-startup-hook (lambda () (yas-load-directory "/Users/serge/.emacs.d/etc/snippets")))
+(add-hook 'emacs-startup-hook (lambda () (yas-load-directory "/home/serge/.emacs.d/etc/yasnippet/snippets")))
 
 ;; org-download
 (require 'org-download)
@@ -997,3 +1009,25 @@
   :custom
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles basic partial-completion)))))
+
+;; consult-dir
+; https://github.com/karthink/consult-dir
+(use-package consult-dir
+  :ensure t
+  :bind (("C-x C-d" . consult-dir)
+         :map minibuffer-local-completion-map
+         ("C-x C-d" . consult-dir)
+         ("C-x C-j" . consult-dir-jump-file)))
+
+;; quarto
+;; https://github.com/quarto-dev/quarto-emacs
+;; load the library
+(require 'quarto-mode)
+;; Note that the following is not necessary to run quarto-mode in .qmd files! It's merely illustrating
+;; how to associate different extensions to the mode.
+(add-to-list 'auto-mode-alist '("\\.Rmd\\'" . poly-quarto-mode))
+
+;; Or, with use-package:
+(use-package quarto-mode
+  :mode (("\\.Rmd" . poly-quarto-mode))
+  )
