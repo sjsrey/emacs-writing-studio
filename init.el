@@ -426,10 +426,6 @@
    '(
      ("e" "Current file log entry" entry (file+olp+datetree buffer-file-name)
       "* %? \n%u")
-     ("f" "Fleeting note"
-      item
-      (file+headline org-default-notes-file "Notes")
-      "- %?")
      ("F" "Fleeting note"
       entry
       (file+headline "~/Documents/org/gtd.org" "Notes")
@@ -997,3 +993,16 @@
   :custom
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles basic partial-completion)))))
+
+;; silence is golden
+(setq ring-bell-function 'ignore)
+
+
+;; projectile
+(use-package projectile
+  :ensure t
+  :init
+  (projectile-mode +1)
+  :bind (:map projectile-mode-map
+              ("s-p" . projectile-command-map)
+              ("C-c p" . projectile-command-map)))
