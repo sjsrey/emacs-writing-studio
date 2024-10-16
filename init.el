@@ -1038,3 +1038,72 @@
   :bind (:map projectile-mode-map
               ("s-p" . projectile-command-map)
               ("C-c p" . projectile-command-map)))
+
+;; python
+;; https://www.youtube.com/watch?v=SbTzIt6rISg
+(use-package python
+  :ensure t
+  :hook ((python-ts-mode . eglot-ensure)
+	 (python-ts-mode . company-mode))
+  :mode (("\\.py\\'" . python-ts-mode))
+  )
+
+;; (use-package python
+;;    :bind (:map python-ts-mode-map
+;;                ("<f5>" . recompile)
+;;                ("<f6>" . eglot-format)
+;; 	       ("<f7>" . py-isort-buffer))
+;;    :hook ((python-ts-mode . eglot-ensure)
+;;           (python-ts-mode . company-mode))
+;;    :mode (("\\.py\\'" . python-ts-mode)))
+
+;; (add-hook 'python-ts-mode-hook
+;;           (lambda ()
+;;             (add-hook 'before-save-hook
+;;                       (lambda ()
+;;                         (when (eglot-managed-p)
+;;                           (eglot-format-buffer)))
+;;                       nil t)
+;;             (add-hook 'before-save-hook
+;;                       (lambda ()
+;;                         (when (derived-mode-p 'python-ts-mode)
+;;                           (python-isort-buffer)))
+;;                       nil t)))
+
+
+
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+
+  (use-package conda
+    :ensure t
+    :config
+    (setq conda-env-home-directory
+          (expand-file-name "~/mambaforge")))
+
+  (use-package highlight-indent-guides
+    :ensure t
+    :hook (python-ts-mode . highlight-indent-guides-mode)
+    :config
+    (set-face-foreground 'highlight-indent-guides-character-face "white")
+    (setq highlight-indent-guides-method 'character))
+
+  (setenv "PATH" (concat (getenv "PATH") ":/home/serge/mambaforge/bin"))
+  (add-to-list 'exec-path "/home/serge/mambaforge/bin")
+
+(setq python-shell-interpreter "ipython")
+
+;; company
+
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :bind (:map company-active-map
+         ("<tab>" . company-complete-selection))
+        (:map lsp-mode-map
+         ("<tab>" . company-indent-or-complete-common))
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idle-delay 0.0))
+
+(use-package company-box
+  :hook (company-mode . company-box-mode))
