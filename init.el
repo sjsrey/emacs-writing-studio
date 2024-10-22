@@ -852,10 +852,10 @@
          )
 (setq org-log-done 'time)
 
-(use-package org-bullets
-  :ensure t
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+;; (use-package org-bullets
+;;   :ensure t
+;;   :config
+;;   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
 (setq org-agenda-files
       '("~/Documents/org/tasks/books.org"
@@ -1061,7 +1061,6 @@
 (setq python-shell-interpreter "ipython")
 
 ;; company
-
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)
@@ -1075,3 +1074,7 @@
 
 (use-package company-box
   :hook (company-mode . company-box-mode))
+
+
+;; global key bindings
+(global-set-key (kbd "M-s M-b") #'consult-buffer)
