@@ -1093,7 +1093,6 @@
 (setq python-shell-interpreter "ipython")
 
 ;; company
-
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)
@@ -1107,6 +1106,7 @@
 
 (use-package company-box
   :hook (company-mode . company-box-mode))
+
 
 ;; dashboard
 ;; use-package with package.el:
@@ -1143,3 +1143,8 @@
                         (registers . 5)))
 (setq dashboard-projects-backend 'projectile)
 (setq projectile-sort-order 'recentf)
+
+
+;; global key bindings
+(global-set-key (kbd "M-s M-b") #'consult-buffer)
+
