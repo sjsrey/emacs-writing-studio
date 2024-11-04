@@ -1148,3 +1148,52 @@
 ;; global key bindings
 (global-set-key (kbd "M-s M-b") #'consult-buffer)
 
+;; ellama
+
+(defhydra hydra-ellama (:color blue :hint nil)
+  "
+Ellama Commands
+---------------------------------------------
+[_C_] Chat 
+[_c_] Improve conciseness
+[_d_] Define word
+[_g_] Improve grammar  in region or buffer
+[_r_] Code review
+[_s_] Summarize region or buffer
+[_w_] Improve wording in region or buffer
+[_q_] Quit Hydra
+"
+  ("C" ellama-chat)
+  ("c" ellama-improve-conciseness)
+  ("d" ellama-define-word)
+  ("g" ellama-improve-grammar)
+  ("r" ellama-code-review)
+  ("s" ellama-summarize)
+  ("w" ellama-improve-wording)
+  ("q" ni: exit t))
+
+(global-set-key (kbd "C-c 2") 'hydra-ellama/body)
+
+
+;; in-line html export
+; https://www.reddit.com/r/orgmode/comments/7dyywu/creating_a_selfcontained_html/
+
+(defun replace-in-string (what with in)
+  (replace-regexp-in-string (regexp-quote what) with in nil 'literal))
+
+(defun org-html--format-image (source attributes info)
+  (progn
+    (setq source (replace-in-string "%20" " " source))
+    (format "<img src=\"data:image/%s;base64,%s\"%s />"
+            (or (file-name-extension source) "")
+            (base64-encode-string
+             (with-temp-buffer
+               (insert-file-contents-literally source)
+              (buffer-string)))
+            (file-name-nondirectory source))
+    ))
+
+
+;; jump to matching paren
+(global-set-key (kbd "C-c m") 'forward-sexp)
+(global-set-key (kbd "C-c M") 'backward-sexp)
