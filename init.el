@@ -738,7 +738,18 @@
      ("NP" tags-todo "+TODO=\"NEXT\"+pro")
      ("Ns" tags-todo "+TODO=\"NEXT\"+ser")
      ("Nt" tags-todo "+TODO=\"NEXT\"+adv")
-     
+     ("A" . "A granular")
+     ("Aa" tags-todo "+PRIORITY=\"A\"")
+     ("Aw" tags-todo "+PRIORITY=\"A\"+pap")
+     ("Ab" tags-todo "+PRIORITY=\"A\"+bo")
+     ("Ag" tags-todo "+PRIORITY=\"A\"+gra")
+     ("Ac" tags-todo "+PRIORITY=\"A\"+dev")
+     ("Ah" tags-todo "+PRIORITY=\"A\"+human")  
+     ("AP" tags-todo "+PRIORITY=\"A\"++pro")
+     ("As" tags-todo "+PRIORITY=\"A\"+ser")
+     ("At" tags-todo "+PRIORITY=\"A\"+cou")
+     ("AA" tags-todo "+PRIORITY=\"A\"+adv")
+     ("Af" tags-todo "+PRIORITY=\"A\"+personal")
      )
    )
   :bind
@@ -997,3 +1008,244 @@
   :custom
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles basic partial-completion)))))
+
+
+;; shopping
+(defun org-table-to-taskpaper-below ()
+  "Converts the current Org Mode table to Taskpaper format and inserts it below the table."
+  (interactive)
+  (let* ((table-region (org-table-to-lisp))
+         (taskpaper-lines nil))
+    (dolist (row table-region)
+      (push (format "%s\n" (mapconcat 'concat row " ")) taskpaper-lines))
+    (insert "\n")
+    (insert (apply 'concat taskpaper-lines))))
+
+;;; init.el --- Emacs Writing Studio init -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024 Peter Prevos
+
+;; Author: Peter Prevos <peter@prevos.net>
+;; Maintainer: Peter Prevos <peter@prevos.net>
+
+;; This file is NOT part of GNU Emacs.
+;;
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program. If not, see <https://www.gnu.org/licenses/>.
+;;
+;;; Commentary:
+;;
+;; Emacs Writing Studio init file
+;; https://lucidmanager.org/tags/emacs
+;;
+;; This init file is tangled from the Org mode source:
+;; documents/ews-book/99-appendix.org
+;;
+;;; Code:
+
+;; Emacs 29? EWS leverages functionality from the latest Emacs version.
+
+(when (< emacs-major-version 29)
+  (error "Emacs Writing Studio requires Emacs version 29 or later"))
+
+;; Custom settings in a separate file and load the custom settings
+
+(setq-default custom-file (expand-file-name "custom.el" user-emacs-directory))
+
+(when (file-exists-p custom-file)
+  (load custom-file))
+
+(keymap-global-set "C-c w v" 'customise-variable)
+
+;; Set package archives
+
+(use-package package
+  :config
+  (add-to-list 'package-archives
+               '("melpa" . "https://melpa.org/packages/"))
+  (package-initialize))
+
+;; Package Management
+
+(use-package use-package
+  :custom
+  (use-package-always-ensure t)
+  (package-native-compile t)
+  (warning-minimum-level :emergency))
+
+;; Load EWS functions
+
+(load-file (concat (file-name-as-directory user-emacs-directory) "ews.el"))
+
+;; Check for missing external software
+;;
+;; - soffice (LibreOffice): View and create office documents
+;; - zip: Unpack ePub documents
+;; - pdftotext (poppler-utils): Convert PDF to text
+;; - ddjvu (DjVuLibre): View DjVu files
+;; - curl: Reading RSS feeds
+;; - convert (ImageMagick) or gm (GraphicsMagick): Convert image files 
+;; - latex (TexLive, MacTex or MikTeX): Preview LaTeX and export Org to PDF
+;; - hunspell: Spellcheck. Also requires a hunspell dictionary
+;; - grep: Search inside files
+;; - gs (GhostScript) or mutool (MuPDF): View PDF files
+;; - mpg321, ogg123 (vorbis-tools), mplayer, mpv, vlc: Media players
+;; - git: Version control
+
+(ews-missing-executables
+ '("soffice"
+   "zip"
+   "pdftotext"
+   "ddjvu"
+   "curl"
+   ("convert" "gm")
+   "latex"
+   "hunspell"
+   "grep"
+   ("gs" "mutool")
+   ("mpg321" "ogg123" "mplayer" "mpv" "vlc")
+   "git"))
+
+;;; LOOK AND FEEL
+
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+
+;; Short answers only please
+
+(setq use-short-answers t)
+
+;; Spacious padding
+
+(use-package spacious-padding
+  :custom
+  (line-spacing 3)
+  :init
+  (spacious-padding-mode 1))
+
+;; Modus Themes
+
+(use-package modus-themes
+  :custom
+  (modus-themes-italic-constructs t)
+  (modus-themes-bold-constructs t)
+  (modus-themes-mixed-fonts t)
+  (modus-themes-to-toggle
+   '(modus-operandi-tinted modus-vivendi-tinted))
+  :init
+  (load-theme 'modus-operandi-tinted :no-confirm)
+  :bind
+  (("C-c w t t" . modus-themes-toggle)
+   ("C-c w t m" . modus-themes-select)
+   ("C-c w t s" . consult-theme)))
+
+;; Mixed-pitch mode
+
+(use-package mixed-pitch
+  :hook
+  (text-mode . mixed-pitch-mode))
+
+;; Window management
+;; Split windows sensibly
+
+(setq split-width-threshold 120
+      split-height-threshold nil)
+
+;; Keep window sizes balanced
+
+(use-package balanced-windows
+  :config
+  (balanced-windows-mode))
+
+;; MINIBUFFER COMPLETION
+
+;; Enable vertico
+
+(use-package vertico
+  :init
+  (vertico-mode)
+  :custom
+  (vertico-sort-function 'vertico-sort-history-alpha))
+
+;; Persist history over Emacs restarts.
+
+(use-package savehist
+  :init
+  (savehist-mode))
+
+;; Search for partial matches in any order
+
+(use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides
+   '((file (styles partial-completion)))))
+
+;; Enable richer annotations using the Marginalia package
+
+(use-package marginalia
+  :init
+  (marginalia-mode))
+
+;; Improve keyboard shortcut discoverability
+
+(use-package which-key
+  :config
+  (which-key-mode)
+  :custom
+  (which-key-max-description-length 40)
+  (which-key-lighter nil)
+  (which-key-sort-order 'which-key-description-order))
+
+;; Improved help buffers
+
+(use-package helpful
+  :bind
+  (("C-h f" . helpful-function)
+   ("C-h x" . helpful-command)
+   ("C-h k" . helpful-key)
+   ("C-h v" . helpful-variable)))
+
+;;; Text mode
+;; global key bindings
+;(global-set-key (kbd "M-s M-b") #'consult-buffer)
+(global-set-key (kbd "C-c 3") 'consult-buffer)
+
+
+;; ellama
+
+(defhydra hydra-ellama (:color blue :hint nil)
+  "
+Ellama Commands
+---------------------------------------------
+[_C_] Chat 
+[_c_] Improve conciseness
+[_d_] Define word
+[_g_] Improve grammar  in region or buffer
+[_r_] Code review
+[_s_] Summarize region or buffer
+[_w_] Improve wording in region or buffer
+[_q_] Quit Hydra
+"
+  ("C" ellama-chat)
+  ("c" ellama-improve-conciseness)
+  ("d" ellama-define-word)
+  ("g" ellama-improve-grammar)
+  ("r" ellama-code-review)
+  ("s" ellama-summarize)
+  ("w" ellama-improve-wording)
+  ("q" ni: exit t))
+
+(global-set-key (kbd "C-c 2") 'hydra-ellama/body)
