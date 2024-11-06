@@ -1249,3 +1249,12 @@ Ellama Commands
   ("q" ni: exit t))
 
 (global-set-key (kbd "C-c 2") 'hydra-ellama/body)
+
+
+;habits
+
+
+(require 'org-habit)
+      (add-to-list 'org-modules 'org-habit)
+      (setq org-habit-graph-column 60)
+      (setq org-habit-show-all-today t)
