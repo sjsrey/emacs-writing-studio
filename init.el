@@ -915,21 +915,6 @@
     _q_ quit
     ^────────-----
     "
-<<<<<<< HEAD
-  ("b" (find-file "/Users/serge/Documents/org/tasks/books.org"))
-  ("c" (find-file "/Users/serge/Documents/org/tasks/cogs.org"))
-  ("d" (find-file "/Users/serge/Documents/org/tasks/development.org"))
-  ("e" (find-file "/Users/serge/Documents/org/tasks/emacs.org"))
-  ("f" (find-file "/Users/serge/Documents/org/tasks/family.org"))
-  ("g" (find-file "/Users/serge/Documents/org/tasks/grants.org"))
-  ("l" (find-file "/Users/serge/Documents/org/tasks/teaching.org"))
-  ("m" (find-file "/Users/serge/Documents/org/tasks/manuscripts.org"))
-  ("o" (find-file "/Users/serge/Documents/org/tasks/reyos.org"))
-  ("p" (find-file "/Users/serge/Documents/org/tasks/proposals.org"))
-  ("r" (find-file "/Users/serge/Documents/org/tasks/reviews.org"))
-  ("s" (find-file "/Users/serge/Documents/org/tasks/service.org"))
-  ("t" (find-file "/Users/serge/Documents/org/tasks/talks.org"))
-=======
   ("b" (find-file "~/Documents/org/tasks/books.org"))
   ("c" (find-file "~/Documents/org/tasks/cogs.org"))
   ("d" (find-file "~/Documents/org/tasks/development.org"))
@@ -979,11 +964,9 @@
   (add-to-list 'yas-snippet-dirs (expand-file-name "~/.emacs.d/etc/snippets"))
 
    :requires yasnippet)
-<<<<<<< HEAD
-(add-hook 'emacs-startup-hook (lambda () (yas-load-directory "/Users/serge/.emacs.d/etc/snippets")))
-=======
+
 (add-hook 'emacs-startup-hook (lambda () (yas-load-directory "~/.emacs.d/etc/snippets")))
->>>>>>> 5fabcee (beep off mac osx)
+
 
 ;; org-download
 (require 'org-download)
