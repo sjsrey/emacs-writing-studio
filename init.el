@@ -915,6 +915,7 @@
     _q_ quit
     ^────────-----
     "
+<<<<<<< HEAD
   ("b" (find-file "/Users/serge/Documents/org/tasks/books.org"))
   ("c" (find-file "/Users/serge/Documents/org/tasks/cogs.org"))
   ("d" (find-file "/Users/serge/Documents/org/tasks/development.org"))
@@ -928,6 +929,21 @@
   ("r" (find-file "/Users/serge/Documents/org/tasks/reviews.org"))
   ("s" (find-file "/Users/serge/Documents/org/tasks/service.org"))
   ("t" (find-file "/Users/serge/Documents/org/tasks/talks.org"))
+=======
+  ("b" (find-file "~/Documents/org/tasks/books.org"))
+  ("c" (find-file "~/Documents/org/tasks/cogs.org"))
+  ("d" (find-file "~/Documents/org/tasks/development.org"))
+  ("e" (find-file "~/Documents/org/tasks/emacs.org"))
+  ("f" (find-file "~/Documents/org/tasks/family.org"))
+  ("g" (find-file "~/Documents/org/tasks/grants.org"))
+  ("l" (find-file "~/Documents/org/tasks/teaching.org"))
+  ("m" (find-file "~/Documents/org/tasks/manuscripts.org"))
+  ("o" (find-file "~/Documents/org/tasks/reyos.org"))
+  ("p" (find-file "~/Documents/org/tasks/proposals.org"))
+  ("r" (find-file "~/Documents/org/tasks/reviews.org"))
+  ("s" (find-file "~/Documents/org/tasks/service.org"))
+  ("t" (find-file "~/Documents/org/tasks/talks.org"))
+
 
   ("q" nil :color blue)) ; Add :color blue
 
@@ -963,7 +979,11 @@
   (add-to-list 'yas-snippet-dirs (expand-file-name "~/.emacs.d/etc/snippets"))
 
    :requires yasnippet)
+<<<<<<< HEAD
 (add-hook 'emacs-startup-hook (lambda () (yas-load-directory "/Users/serge/.emacs.d/etc/snippets")))
+=======
+(add-hook 'emacs-startup-hook (lambda () (yas-load-directory "~/.emacs.d/etc/snippets")))
+>>>>>>> 5fabcee (beep off mac osx)
 
 ;; org-download
 (require 'org-download)
@@ -1258,3 +1278,7 @@ Ellama Commands
       (add-to-list 'org-modules 'org-habit)
       (setq org-habit-graph-column 60)
       (setq org-habit-show-all-today t)
+
+; bell
+(setq ring-bell-function 'ignore)
+
