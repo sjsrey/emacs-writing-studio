@@ -945,23 +945,7 @@
 
 
 
-; spelling
-; Set Hunspell as the spell checker program
-(setq ispell-program-name "hunspell")
 
-;; Set the default dictionary to en_US
-(setq ispell-dictionary "en_US")
-
-; Set the personal dictionary to use the en_US files in ~/Library/Spelling
-(setq ispell-personal-dictionary "~/Library/Spelling/en_US")
-
-
-;; Set up the dictionary list for en_US
-(setq ispell-local-dictionary-alist
-      '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "'" t ("-d" "en_US") nil utf-8)))
-
-;; Set the personal dictionary to use the en_US files in ~/Library/Spelling
-(setq ispell-personal-dictionary "~/Library/Spelling/en_US")
 
 
 
@@ -1283,3 +1267,37 @@ Ellama Commands
 
 ; bell
 (setq ring-bell-function 'ignore)
+
+(defhydra hydra-org-cite-toggle (:hint nil)
+  "
+Toggle Org-Cite Format:
+_n_: Normal [cite:@key]
+_t_: Text [cite/text/c:@key]
+"
+  ("n" (progn (search-backward "[cite/text/c:@" nil t)
+              (replace-match "[cite:@")))
+  ("t" (progn (search-backward "[cite:@" nil t)
+              (replace-match "[cite/text/c:@")))
+  ("q" nil "quit"))
+
+(global-set-key (kbd "C-c o c") 'hydra-org-cite-toggle/body)
+
+(global-set-key (kbd "C-c o o") 'consult-outline)
+
+
+
+;; spelling
+
+  (use-package flyspell
+    :custom
+    (ispell-program-name "hunspell")
+    (ispell-default-dictionary "en_US")
+    :hook (text-mode . flyspell-mode)
+    :bind (("M-<f7>" . flyspell-buffer)))
+
+  (use-package flyspell-correct
+    :after (flyspell)
+    :bind (("C-;" . flyspell-auto-correct-previous-word)
+           ("<f7>" . flyspell-correct-wrapper)))
+
+
