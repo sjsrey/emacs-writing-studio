@@ -955,6 +955,16 @@
 ; Set the personal dictionary to use the en_US files in ~/Library/Spelling
 (setq ispell-personal-dictionary "~/Library/Spelling/en_US")
 
+
+;; Set up the dictionary list for en_US
+(setq ispell-local-dictionary-alist
+      '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "'" t ("-d" "en_US") nil utf-8)))
+
+;; Set the personal dictionary to use the en_US files in ~/Library/Spelling
+(setq ispell-personal-dictionary "~/Library/Spelling/en_US")
+
+
+
 ; dired listing dot files
 (setq insert-directory-program "/opt/homebrew/bin/gls")  ;; Adjust path if needed
 (setq dired-listing-switches "-alh")
