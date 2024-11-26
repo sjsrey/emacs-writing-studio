@@ -170,6 +170,15 @@
   (completion-category-overrides
    '((file (styles partial-completion)))))
 
+;; projectile
+(use-package projectile
+  :ensure t
+  :init
+  (projectile-mode +1)
+  :bind (:map projectile-mode-map
+              ("s-p" . projectile-command-map)
+              ("C-c p" . projectile-command-map)))
+
 ;; Enable richer annotations using the Marginalia package
 
 (use-package marginalia
@@ -1264,4 +1273,3 @@ Ellama Commands
 
 ; bell
 (setq ring-bell-function 'ignore)
-
