@@ -415,7 +415,8 @@
 ;;       (file+headline org-default-notes-file "Tasks")
 ;;       "* TODO %i%?"))))
 
-
+(require 'org-protocol)
+(setq org-protocol-default-template-key "L")
 (use-package org
   :bind
   (("C-c c" . org-capture)
@@ -441,7 +442,7 @@
       (file "~/Documents/org/tpl-review.txt")
       :after-finalize (lambda () (find-file "~/Documents/org/reviews.org"))
       )
-     ("p" "Protocol" entry (file+headline "~/Documents/org/gtd.org" "5_Inbox")
+     ("P" "Protocol" entry (file+headline "~/Documents/org/gtd.org" "5_Inbox")
       "* TODO %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
      ("L" "Protocol Link" entry (file+headline "~/Documents/org/gtd.org" "5_Inbox")
       "* TODO %? \n[[%:link][%:description]] \nCaptured On: %U")
@@ -734,6 +735,18 @@
      ("NP" tags-todo "+TODO=\"NEXT\"+pro")
      ("Ns" tags-todo "+TODO=\"NEXT\"+ser")
      ("Nt" tags-todo "+TODO=\"NEXT\"+adv")
+     ("A" . "A granular")
+     ("Aa" tags-todo "+PRIORITY=\"A\"")
+     ("Aw" tags-todo "+PRIORITY=\"A\"+pap")
+     ("Ab" tags-todo "+PRIORITY=\"A\"+bo")
+     ("Ag" tags-todo "+PRIORITY=\"A\"+gra")
+     ("Ac" tags-todo "+PRIORITY=\"A\"+dev")
+     ("Ah" tags-todo "+PRIORITY=\"A\"+human")  
+     ("AP" tags-todo "+PRIORITY=\"A\"++pro")
+     ("As" tags-todo "+PRIORITY=\"A\"+ser")
+     ("At" tags-todo "+PRIORITY=\"A\"+cou")
+     ("AA" tags-todo "+PRIORITY=\"A\"+adv")
+     ("Af" tags-todo "+PRIORITY=\"A\"+personal")
      
      )
    )
@@ -844,8 +857,8 @@
 
 ;;; fixing
 ;;; insert-directory: Listing directory failed but ‘access-file’ worked
-(when (eq system-type 'darwin)
- (setq insert-directory-program "/opt/homebrew/bin/gls"))
+;(when (eq system-type 'darwin)
+; (setq insert-directory-program "/opt/homebrew/bin/gls"))
 
 ;org
 (setq org-refile-targets  '((org-agenda-files :maxlevel . 5))
@@ -931,7 +944,6 @@
 (setq ispell-personal-dictionary "~/Library/Spelling/en_US")
 
 ; dired listing dot files
-; (setq insert-directory-program "/opt/homebrew/bin/gls")  ;; Adjust path if needed
 (setq dired-listing-switches "-alh")
 
 ; backup
@@ -994,6 +1006,27 @@
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles basic partial-completion)))))
 
+;; consult-dir
+; https://github.com/karthink/consult-dir
+(use-package consult-dir
+  :ensure t
+  :bind (("C-x C-d" . consult-dir)
+         :map minibuffer-local-completion-map
+         ("C-x C-d" . consult-dir)
+         ("C-x C-j" . consult-dir-jump-file)))
+
+;; quarto
+;; https://github.com/quarto-dev/quarto-emacs
+;; load the library
+(require 'quarto-mode)
+;; Note that the following is not necessary to run quarto-mode in .qmd files! It's merely illustrating
+;; how to associate different extensions to the mode.
+(add-to-list 'auto-mode-alist '("\\.Rmd\\'" . poly-quarto-mode))
+
+;; Or, with use-package:
+(use-package quarto-mode
+  :mode (("\\.Rmd" . poly-quarto-mode))
+  )
 ;; silence is golden
 (setq ring-bell-function 'ignore)
 
@@ -1076,5 +1109,97 @@
   :hook (company-mode . company-box-mode))
 
 
+;; dashboard
+;; use-package with package.el:
+(use-package dashboard
+  :config
+  (dashboard-setup-startup-hook))
+
+;; Set the title
+(setq dashboard-banner-logo-title "Welcome to Emacs Dashboard")
+;; Set the banner
+(setq dashboard-startup-banner 'official)
+;; Value can be:
+;;  - 'official which displays the official emacs logo.
+;;  - 'logo which displays an alternative emacs logo.
+;;  - an integer which displays one of the text banners
+;;    (see dashboard-banners-directory files).
+;;  - a string that specifies a path for a custom banner
+;;    currently supported types are gif/image/text/xbm.
+;;  - a cons of 2 strings which specifies the path of an image to use
+;;    and other path of a text file to use if image isn't supported.
+;;    ("path/to/image/file/image.png" . "path/to/text/file/text.txt").
+;;  - a list that can display an random banner,
+;;    supported values are: string (filepath), 'official, 'logo and integers.
+
+;; Content is not centered by default. To center, set
+(setq dashboard-center-content t)
+;; vertically center content
+(setq dashboard-vertically-center-content t)
+
+(setq dashboard-items '((recents   . 5)
+                        (bookmarks . 5)
+                        (projects  . 5)
+                        (agenda    . 5)
+                        (registers . 5)))
+(setq dashboard-projects-backend 'projectile)
+(setq projectile-sort-order 'recentf)
+
+
 ;; global key bindings
 (global-set-key (kbd "M-s M-b") #'consult-buffer)
+
+;; ellama
+
+(defhydra hydra-ellama (:color blue :hint nil)
+  "
+Ellama Commands
+---------------------------------------------
+[_C_] Chat 
+[_c_] Improve conciseness
+[_d_] Define word
+[_g_] Improve grammar  in region or buffer
+[_r_] Code review
+[_s_] Summarize region or buffer
+[_w_] Improve wording in region or buffer
+[_q_] Quit Hydra
+"
+  ("C" ellama-chat)
+  ("c" ellama-improve-conciseness)
+  ("d" ellama-define-word)
+  ("g" ellama-improve-grammar)
+  ("r" ellama-code-review)
+  ("s" ellama-summarize)
+  ("w" ellama-improve-wording)
+  ("q" ni: exit t))
+
+(global-set-key (kbd "C-c 2") 'hydra-ellama/body)
+
+
+;; in-line html export
+; https://www.reddit.com/r/orgmode/comments/7dyywu/creating_a_selfcontained_html/
+
+(defun replace-in-string (what with in)
+  (replace-regexp-in-string (regexp-quote what) with in nil 'literal))
+
+(defun org-html--format-image (source attributes info)
+  (progn
+    (setq source (replace-in-string "%20" " " source))
+    (format "<img src=\"data:image/%s;base64,%s\"%s />"
+            (or (file-name-extension source) "")
+            (base64-encode-string
+             (with-temp-buffer
+               (insert-file-contents-literally source)
+              (buffer-string)))
+            (file-name-nondirectory source))
+    ))
+
+
+;; jump to matching paren
+(global-set-key (kbd "C-c m") 'forward-sexp)
+(global-set-key (kbd "C-c M") 'backward-sexp)
+
+;; org-protocol
+(require 'server)
+(unless (server-running-p)
+  (server-start))
