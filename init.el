@@ -415,7 +415,8 @@
 ;;       (file+headline org-default-notes-file "Tasks")
 ;;       "* TODO %i%?"))))
 
-
+(require 'org-protocol)
+(setq org-protocol-default-template-key "L")
 (use-package org
   :bind
   (("C-c c" . org-capture)
@@ -441,7 +442,7 @@
       (file "~/Documents/org/tpl-review.txt")
       :after-finalize (lambda () (find-file "~/Documents/org/reviews.org"))
       )
-     ("p" "Protocol" entry (file+headline "~/Documents/org/gtd.org" "5_Inbox")
+     ("P" "Protocol" entry (file+headline "~/Documents/org/gtd.org" "5_Inbox")
       "* TODO %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
      ("L" "Protocol Link" entry (file+headline "~/Documents/org/gtd.org" "5_Inbox")
       "* TODO %? \n[[%:link][%:description]] \nCaptured On: %U")
@@ -1197,3 +1198,43 @@ Ellama Commands
 ;; jump to matching paren
 (global-set-key (kbd "C-c m") 'forward-sexp)
 (global-set-key (kbd "C-c M") 'backward-sexp)
+
+;; org-protocol
+(require 'server)
+(unless (server-running-p)
+  (server-start))
+
+;; citation styles
+(defhydra hydra-org-cite-toggle (:hint nil)
+  "
+Toggle Org-Cite Format:
+_n_: Normal [cite:@key]
+_t_: Text [cite/text/c:@key]
+"
+  ("n" (progn (search-backward "[cite/text/c:@" nil t)
+              (replace-match "[cite:@")))
+  ("t" (progn (search-backward "[cite:@" nil t)
+              (replace-match "[cite/text/c:@")))
+  ("q" nil "quit"))
+
+(global-set-key (kbd "C-c o c") 'hydra-org-cite-toggle/body)
+
+;; return
+(setq org-return-follows-link t)
+
+;; md export
+(require 'ox-md)
+
+;; scratch buffer
+(defun jump-to-scratch-buffer ()
+  "Jump to the *scratch* buffer, creating it if it doesn't exist."
+  (interactive)
+  (switch-to-buffer (get-buffer-create "*scratch*")))
+
+(global-set-key (kbd "C-c s") 'jump-to-scratch-buffer)
+
+;; line numbers
+(global-set-key (kbd "C-c l") 'display-line-numbers-mode)
+(setq display-line-numbers-type 'relative)
+
+
