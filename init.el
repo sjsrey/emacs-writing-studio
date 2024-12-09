@@ -1011,7 +1011,7 @@
 (use-package consult-dir
   :ensure t
   :bind (("C-x C-d" . consult-dir)
-         :map minibuffer-local-completion-map
+	 :map minibuffer-local-completion-map
          ("C-x C-d" . consult-dir)
          ("C-x C-j" . consult-dir-jump-file)))
 
@@ -1237,4 +1237,114 @@ _t_: Text [cite/text/c:@key]
 (global-set-key (kbd "C-c l") 'display-line-numbers-mode)
 (setq display-line-numbers-type 'relative)
 
+
+;; email
+
+;https://blog.bgcarlisle.com/2024/03/07/how-to-set-up-mu4e-to-work-with-protonmail-bridge/
+;; This loads mu4e
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/elpa/mu4e-1.8.14")
+(require 'mu4e)
+
+;; This tells mu4e what your email address is
+(setq user-mail-address  "serge.rey@protonmail.com")
+
+;; SMTP settings:
+(setq send-mail-function 'smtpmail-send-it)    ; should not be modified
+(setq smtpmail-smtp-server "127.0.0.1") ; host running SMTP server
+(setq smtpmail-smtp-service 1025)               ; SMTP service port number
+(setq smtpmail-stream-type 'starttls)          ; type of SMTP connections to use
+
+;; Mail folders:
+(setq mu4e-drafts-folder "/Drafts")
+(setq mu4e-sent-folder   "/Sent")
+(setq mu4e-trash-folder  "/Trash")
+
+;; The command used to get your emails (adapt this line, see section 2.3):
+(setq mu4e-get-mail-command "mbsync --config ~/.emacs.d/.mbsyncrc protonmail")
+;; Further customization:
+(setq mu4e-html2text-command "w3m -T text/html" ; how to handle html-formatted emails
+      mu4e-update-interval 300                  ; seconds between each mail retrieval
+      mu4e-headers-auto-update t                ; avoid to type `g' to update
+      mu4e-view-show-images t                   ; show images in the view buffer
+      mu4e-use-fancy-chars t)                   ; allow fancy icons for mail threads
+;; split view
+(setq mu4e-split-view 'horizontal)
+(setq mu4e-headers-visible-lines 20) ;; Set number of lines for headers pane
+(setq mu4e-view-show-addresses t) ;; Show full email addresses
+(setq mu4e-headers-auto-update t) ;; Automatically update the message view
+
+
+
+
+;; Do not reply to yourself:
+(setq mu4e-compose-reply-ignore-address '("no-?reply" "you@proton.me"))
+
+;; maildirs
+(setq mu4e-maildir-shortcuts
+  '( (:maildir "/Inbox"     :key  ?i)
+     (:maildir "/All mail"  :key  ?a)
+     (:maildir "/Folders/Work"    :key  ?w)))
+
+;; signature
+;(setq message-signature "bgc")
+(setq
+mu4e-compose-signature
+(concat
+ "Sergio (Serge) Rey\n"
+ "Professor\n"
+ "Founder and Director, Center for Open Geographical Science\n"
+ "San Diego State University\n"
+ "http://cogs.sdsu.edu\n"
+  "http://sergerey.org"))
+
+(setq mu4e-bookmarks
+  '((:name  "Unread messages"
+     :query "flag:unread and maildir:/Inbox"
+     :key   ?u)
+    (:name  "Today's messages"
+     :query "date:today..now"
+     :key ?t)
+    (:name  "Last 7 days"
+     :query "date:7d..now"
+     :key ?7)
+    (:name  "Messages with Word docs"
+     :query "mime:application/msword OR mime:application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+     :key ?w)
+    (:name  "Messages with PDF"
+     :query "mime:application/pdf"
+     :key ?p)
+    (:name  "Messages with calendar event"
+     :query "mime:text/calendar"
+     :key ?e)
+    ))
+
+;; This fixes a frustrating bug, thanks @gnomon@mastodon.social
+(setq mu4e-change-filenames-when-moving t)
+
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/elpa/notmuch-0.35")
+    (autoload 'notmuch "notmuch" "notmuch mail" t)
+
+    (setq send-mail-function 'sendmail-send-it
+      sendmail-program "/usr/bin/msmtp"
+      mail-specify-envelope-from t
+      message-sendmail-envelope-from 'header
+      mail-envelope-from 'header)
+
+;;https://notmuchmail.org/emacstips/#index23h2
+;; (use-package ol-notmuch
+;;   :ensure t
+;;   :bind
+;;   ("C-c l" . org-store-link))
+
+  ;(define-key notmuch-show-mode-map "r" 'notmuch-show-reply)
+  ;  (define-key notmuch-show-mode-map "R" 'notmuch-show-reply-sender)
+(setq notmuch-search-oldest-first nil)
+ (setq notmuch-saved-searches
+        '((:name "inbox" :query "tag:inbox not tag:trash" :key "i")
+          (:name "todo" :query "tag:todo" :key "t")
+          (:name "code" :query "tag:code and tag:unread" :key "c")
+	      (:name "news" :query "tag:news" :key "n")
+          (:name "flagged" :query "tag:flagged" :key "f")
+          (:name "sent" :query "tag:sent" :key "s")
+          (:name "drafts" :query "tag:draft" :key "d")))
 
