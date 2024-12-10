@@ -1348,3 +1348,77 @@ mu4e-compose-signature
           (:name "sent" :query "tag:sent" :key "s")
           (:name "drafts" :query "tag:draft" :key "d")))
 
+
+;; respose to referees
+
+
+(defun wrap-paragraph-with-revcom ()
+  "Wrap the current paragraph in \\begin{revcom} and \\end{revcom}."
+  (interactive)
+  (save-excursion
+    ;; Mark the current paragraph as the region
+    (mark-paragraph)
+    (let ((start (region-beginning))
+          (end (region-end)))
+      ;; Insert the LaTeX environment
+      (goto-char end)
+      (insert "\\end{revcom}")
+      (goto-char start)
+      (insert "\\begin{revcom}"))))
+
+
+(defun wrap-paragraph-with-response ()
+  "Wrap the current paragraph in \\begin{response} and \\end{response}."
+  (interactive)
+  (save-excursion
+    ;; Mark the current paragraph as the region
+    (mark-paragraph)
+    (let ((start (region-beginning))
+          (end (region-end)))
+      ;; Insert the LaTeX environment
+      (goto-char end)
+      (insert "\\end{response}")
+      (goto-char start)
+      (insert "\\begin{response}"))))
+
+b
+(defun wrap-region-with-response (start end)
+  "Wrap the selected region with \\begin{opendel} and \\end{opendel}."
+  (interactive "r")
+  (save-excursion
+    (goto-char end)
+    (insert "\\end{response}")
+    (goto-char start)
+    (insert "\\begin{response}")))
+
+
+(defun wrap-region-with-revcom (start end)
+  "Wrap the selected region with \\begin{opendel} and \\end{opendel}."
+  (interactive "r")
+  (save-excursion
+    (goto-char end)
+    (insert "\\end{revcom}")
+    (goto-char start)
+    (insert "\\begin{revcom}")))
+
+
+(require 'hydra)
+
+(defhydra hydra-respond-to-referees (:color blue :hint nil)
+  "
+Respond to referees:
+[_r_] Wrap paragraph with \\begin{revcom} ... \\end{revcom}
+[_p_] Wrap paragraph with \\begin{response} ... \\end{response}
+[_R_] Wrap region with \\begin{response} ... \\end{response}
+[_P_] Wrap region with \\begin{revcom} ... \\end{revcom}
+[_q_] Quit
+"
+  ("r" wrap-paragraph-with-revcom)
+  ("p" wrap-paragraph-with-response)
+  ("R" wrap-region-with-response)
+  ("P" wrap-region-with-revcom)
+  ("q" nil "quit"))
+
+;; Bind the Hydra to C-c 9
+(global-set-key (kbd "C-c 9") 'hydra-respond-to-referees/body)
+
