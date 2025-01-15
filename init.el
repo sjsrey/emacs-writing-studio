@@ -1203,3 +1203,15 @@ Ellama Commands
 (require 'server)
 (unless (server-running-p)
   (server-start))
+
+
+;; atomic chrome
+(use-package atomic-chrome)
+(atomic-chrome-start-server)
+(setq atomic-chrome-default-major-mode 'python-mode)
+(setq atomic-chrome-extension-type-list '(ghost-text))
+(setq atomic-chrome-server-ghost-text-port 4001)
+(setq atomic-chrome-url-major-mode-alist
+'(("github\\.com" . gfm-mode)
+("overleaf.com" . latex-mode)
+("750words.com" . latex-mode)))
