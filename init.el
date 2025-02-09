@@ -1045,10 +1045,19 @@
 (use-package python
   :ensure t
   :hook ((python-ts-mode . eglot-ensure)
-	 (python-ts-mode . company-mode))
+	 (python-ts-mode . company-mode)
+	 (python-ts-mode . ruff-format-on-save-mode)
+	 (python-ts-mode . (lambda ();
+			     (local-set-key (kbd "C-c r") 'ruff-format-buffer)
+			     (local-set-key (kbd "M-n") 'flymake-goto-next-error)
+                             (local-set-key (kbd "M-p") 'flymake-goto-prev-error)
+			     ))
+
+	 )
   :mode (("\\.py\\'" . python-ts-mode))
   )
-
+(use-package ruff-format
+  :ensure t)
 ;; (use-package python
 ;;    :bind (:map python-ts-mode-map
 ;;                ("<f5>" . recompile)
