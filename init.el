@@ -39,6 +39,12 @@
 
 (setq-default custom-file (expand-file-name "custom.el" user-emacs-directory))
 
+(use-package denote
+  :straight (denote :type git :local-repo "~/opt/denote/")
+  :config
+  (message "Loaded denote from a local Git repository"))
+
+;; get custom file
 (when (file-exists-p custom-file)
   (load custom-file))
 
@@ -442,6 +448,10 @@
       (file "~/Documents/org/tpl-review.txt")
       :after-finalize (lambda () (find-file "~/Documents/org/reviews.org"))
       )
+      ("b" "Blocks for Weekly Review" entry (file+olp+datetree "~/Documents/org/blocks.org")
+      (file "~/Documents/org/tpl-blocks.txt")
+      :after-finalize (lambda () (find-file "~/Documents/org/reviews.org"))
+      )
      ("P" "Protocol" entry (file+headline "~/Documents/org/gtd.org" "5_Inbox")
       "* TODO %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
      ("L" "Protocol Link" entry (file+headline "~/Documents/org/gtd.org" "5_Inbox")
@@ -798,6 +808,11 @@
               ( "."     . dired-omit-mode))
   :custom (dired-omit-files "^\\.[a-zA-Z0-9]+"))
 
+
+(use-package all-the-icons-dired
+  :ensure t
+  :hook (dired-mode . all-the-icons-dired-mode))
+
 ;; Backup files
 
 (setq-default backup-directory-alist
@@ -1045,9 +1060,14 @@
 (use-package python
   :ensure t
   :hook ((python-ts-mode . eglot-ensure)
-	 (python-ts-mode . company-mode))
-  :mode (("\\.py\\'" . python-ts-mode))
-  )
+         (python-ts-mode . company-mode))
+  :mode (("\\.py\\'" . python-ts-mode)))
+
+;; Add keybinding for both python-mode and python-ts-mode
+(dolist (hook '(python-mode-hook python-ts-mode-hook))
+  (add-hook hook
+            (lambda ()
+              (local-set-key (kbd "C-c o") #'consult-imenu))))
 
 ;; (use-package python
 ;;    :bind (:map python-ts-mode-map
@@ -1096,7 +1116,7 @@
 ;; company
 (use-package company
   :after lsp-mode
-  :hook (lsp-mode . company-mode)
+  :hook ((prog-mode . company-mode))
   :bind (:map company-active-map
          ("<tab>" . company-complete-selection))
         (:map lsp-mode-map
@@ -1108,41 +1128,63 @@
 (use-package company-box
   :hook (company-mode . company-box-mode))
 
+(setq eldoc-echo-area-use-multiline-p nil)
+(setq eldoc-idle-delay 0.2)
 
-;; dashboard
-;; use-package with package.el:
-(use-package dashboard
-  :config
-  (dashboard-setup-startup-hook))
+;; ;; dashboard
+;; ;; use-package with package.el:
+;; (use-package dashboard
+;;   :ensure t
+;;   :init
+;;   (setq initial-buffer-choice 'dashboard-open)
+;;   :config
+;;   (dashboard-setup-startup-hook)
+;;  :custom
+;;   (dashboard-display-icons-p t)
+;;   (dashboard-icon-type 'nerd-icons)
+;;   (dashboard-set-heading-icons t)
+;;   (dashboard-set-file-icons t)
+;; ;  (dashboard-startup-banner  "~/cowboy.gif")
+;;   (dashboard-startup-banner 'official)
+;;   (dashboard-vertically-center-content t)
+;;   (dashboard-center-content t)
+;;   (dashboard-items '((recents   . 5)
+;;                      (agenda    . 5)))
+;;   (dashboard-startupify-list '(dashboard-insert-banner
+;;                      dashboard-insert-newline
+;;                      dashboard-insert-banner-title
+;;                      dashboard-insert-init-info
+;;                      dashboard-insert-newline
+;;                      dashboard-insert-items)))
 
-;; Set the title
-(setq dashboard-banner-logo-title "Welcome to Emacs Dashboard")
-;; Set the banner
-(setq dashboard-startup-banner 'official)
-;; Value can be:
-;;  - 'official which displays the official emacs logo.
-;;  - 'logo which displays an alternative emacs logo.
-;;  - an integer which displays one of the text banners
-;;    (see dashboard-banners-directory files).
-;;  - a string that specifies a path for a custom banner
-;;    currently supported types are gif/image/text/xbm.
-;;  - a cons of 2 strings which specifies the path of an image to use
-;;    and other path of a text file to use if image isn't supported.
-;;    ("path/to/image/file/image.png" . "path/to/text/file/text.txt").
-;;  - a list that can display an random banner,
-;;    supported values are: string (filepath), 'official, 'logo and integers.
+;; ;; Set the title
+;; (setq dashboard-banner-logo-title "Welcome to Emacs Dashboard")
+;; ;; Set the banner
+;; (setq dashboard-startup-banner 'official)
+;; ;; Value can be:
+;; ;;  - 'official which displays the official emacs logo.
+;; ;;  - 'logo which displays an alternative emacs logo.
+;; ;;  - an integer which displays one of the text banners
+;; ;;    (see dashboard-banners-directory files).
+;; ;;  - a string that specifies a path for a custom banner
+;; ;;    currently supported types are gif/image/text/xbm.
+;; ;;  - a cons of 2 strings which specifies the path of an image to use
+;; ;;    and other path of a text file to use if image isn't supported.
+;; ;;    ("path/to/image/file/image.png" . "path/to/text/file/text.txt").
+;; ;;  - a list that can display an random banner,
+;; ;;    supported values are: string (filepath), 'official, 'logo and integers.
 
-;; Content is not centered by default. To center, set
-(setq dashboard-center-content t)
-;; vertically center content
-(setq dashboard-vertically-center-content t)
+;; ;; Content is not centered by default. To center, set
+;; (setq dashboard-center-content t)
+;; ;; vertically center content
+;; (setq dashboard-vertically-center-content t)
 
-(setq dashboard-items '((recents   . 5)
-                        (bookmarks . 5)
-                        (projects  . 5)
-                        (agenda    . 5)
-                        (registers . 5)))
-(setq dashboard-projects-backend 'projectile)
+;; (setq dashboard-items '((recents   . 5)
+;;                         (bookmarks . 5)
+;;                         (projects  . 5)
+;;                         (agenda    . 5)
+;;                         (registers . 5)))
+;; (setq dashboard-projects-backend 'projectile)
 (setq projectile-sort-order 'recentf)
 
 
@@ -1215,3 +1257,37 @@ Ellama Commands
 '(("github\\.com" . gfm-mode)
 ("overleaf.com" . latex-mode)
 ("750words.com" . latex-mode)))
+
+;; silence is golden
+(setq visible-bell t)
+
+
+;; jump back
+;; Custom highlight face (optional)
+(defface my/flash-highlight
+  '((t (:background "yellow")))
+  "Temporary highlight face for jump origin.")
+
+(defun my/flash-back-position ()
+  "Highlight the position where the jump began."
+  (let ((ov (make-overlay (point) (1+ (point)))))
+    (overlay-put ov 'face 'my/flash-highlight)
+    (run-with-timer 0.5 nil #'delete-overlay ov)))
+
+(defun my/flash-before-jump (&rest _)
+  "Save current point and flash it after the jump."
+  (let ((pos (point)))
+    (run-with-idle-timer 0.05 nil
+                         (lambda ()
+                           (goto-char pos)
+                           (my/flash-back-position)))))
+
+;; Add flash behavior to common jump functions
+(dolist (fn '(consult-imenu
+              xref-find-definitions
+              xref-find-references
+              xref-find-apropos
+              eglot-find-declaration
+              eglot-find-implementation
+              eglot-find-typeDefinition))
+  (advice-add fn :before #'my/flash-before-jump))
