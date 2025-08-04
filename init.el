@@ -900,6 +900,7 @@
         "~/Documents/org/tasks/talks.org"
         "~/Documents/org/tasks/teaching.org"
         "~/Documents/org/habits.org"
+	"~/Documents/org/tasks/gtd.org"
         ))
 
 
@@ -1291,3 +1292,41 @@ Ellama Commands
               eglot-find-implementation
               eglot-find-typeDefinition))
   (advice-add fn :before #'my/flash-before-jump))
+
+
+;; read aloud
+ (load-file "~/opt/read-aloud.el/read-aloud.el")
+
+;; tramp
+
+(with-eval-after-load 'tramp
+  (add-to-list 'tramp-remote-path "~/miniforge3/bin") ;; or your actual install location
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+
+;; pomodoro
+(defvar my/pomodoro-status-file "~/.cache/org-pomodoro-status"
+  "Path to the file where Pomodoro status will be written.")
+
+
+(defun my/update-pomodoro-status ()
+  "Write the current Pomodoro status to a file for display in i3bar."
+  (let* ((status (ignore-errors org-pomodoro-state))
+         (time-str (ignore-errors
+                     (when (fboundp 'org-pomodoro-format-seconds)
+                       (org-pomodoro-format-seconds))))
+         (output (format "🍅 %s %s"
+                         (or status "NoStatus")
+                         (or time-str "NoTime"))))
+    ;(message "[org-pomodoro] writing: %s → %s" output my/pomodoro-status-file)
+    (condition-case err
+        (write-region output nil my/pomodoro-status-file nil 'silent)
+      (error (message "[org-pomodoro] Error writing file: %s" err)))))
+
+
+;; Hooks to keep the file updated
+(add-hook 'org-pomodoro-started-hook #'my/update-pomodoro-status)
+(add-hook 'org-pomodoro-tick-hook #'my/update-pomodoro-status)
+(add-hook 'org-pomodoro-finished-hook #'my/update-pomodoro-status)
+(add-hook 'org-pomodoro-killed-hook #'my/update-pomodoro-status)
+(add-hook 'org-pomodoro-break-finished-hook #'my/update-pomodoro-status)
+(add-hook 'org-pomodoro-long-break-finished-hook #'my/update-pomodoro-status)
