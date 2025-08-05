@@ -688,7 +688,7 @@
      ("\\subsection{%s}" . "\\subsection*{%s}")
      ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
 
-;;; ADMINISTRATION
+;; ;;; ADMINISTRATION
 
 ;; Bind org agenda command and custom agenda
 (use-package org
@@ -1088,7 +1088,7 @@
     :ensure t
     :config
     (setq conda-env-home-directory
-          (expand-file-name "~/mambaforge")))
+          (expand-file-name "~/miniforge3")))
 
   (use-package highlight-indent-guides
     :ensure t
@@ -1097,8 +1097,8 @@
     (set-face-foreground 'highlight-indent-guides-character-face "white")
     (setq highlight-indent-guides-method 'character))
 
-  (setenv "PATH" (concat (getenv "PATH") ":/home/serge/mambaforge/bin"))
-  (add-to-list 'exec-path "/home/serge/mambaforge/bin")
+  (setenv "PATH" (concat (getenv "PATH") ":/home/serge/miniforge3/bin"))
+  (add-to-list 'exec-path "/home/serge/miniforge3/bin")
 
 (setq python-shell-interpreter "ipython")
 
@@ -1118,40 +1118,66 @@
   :hook (company-mode . company-box-mode))
 
 
+  ;; Auto completion
+  (use-package company
+    :custom
+    (company-minimum-prefix-length 4)
+    (company-dabbrev-minimum-length 8)
+    (company-selection-wrap-around t)
+    :init
+    (global-company-mode))
+
+
+
 ;; dashboard
-;; use-package with package.el:
 (use-package dashboard
+  :ensure t
   :config
-  (dashboard-setup-startup-hook))
+  (setq show-week-agenda-p t)
+  (setq dashboard-items '((recents . 15) (agenda . 5)))
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-startup-banner 3)
+  (dashboard-setup-startup-hook)
+  )
 
-;; Set the title
-(setq dashboard-banner-logo-title "Welcome to Emacs Dashboard")
-;; Set the banner
-(setq dashboard-startup-banner 'official)
-;; Value can be:
-;;  - 'official which displays the official emacs logo.
-;;  - 'logo which displays an alternative emacs logo.
-;;  - an integer which displays one of the text banners
-;;    (see dashboard-banners-directory files).
-;;  - a string that specifies a path for a custom banner
-;;    currently supported types are gif/image/text/xbm.
-;;  - a cons of 2 strings which specifies the path of an image to use
-;;    and other path of a text file to use if image isn't supported.
-;;    ("path/to/image/file/image.png" . "path/to/text/file/text.txt").
-;;  - a list that can display an random banner,
-;;    supported values are: string (filepath), 'official, 'logo and integers.
 
-;; Content is not centered by default. To center, set
-(setq dashboard-center-content t)
-;; vertically center content
-(setq dashboard-vertically-center-content t)
+;; old below here
 
-(setq dashboard-items '((recents   . 5)
-                        (bookmarks . 5)
-                        (projects  . 5)
-                        (agenda    . 5)
-                        (registers . 5)))
-(setq dashboard-projects-backend 'projectile)
+
+;; use-package with package.el:
+;; (use-package dashboard
+;;   :config
+;;   (dashboard-setup-startup-hook))
+
+;; ;; Set the title
+;; (setq dashboard-banner-logo-title "Welcome to Emacs Dashboard")
+;; ;; Set the banner
+;; (setq dashboard-startup-banner 'official)
+;; ;; Value can be:
+;; ;;  - 'official which displays the official emacs logo.
+;; ;;  - 'logo which displays an alternative emacs logo.
+;; ;;  - an integer which displays one of the text banners
+;; ;;    (see dashboard-banners-directory files).
+;; ;;  - a string that specifies a path for a custom banner
+;; ;;    currently supported types are gif/image/text/xbm.
+;; ;;  - a cons of 2 strings which specifies the path of an image to use
+;; ;;    and other path of a text file to use if image isn't supported.
+;; ;;    ("path/to/image/file/image.png" . "path/to/text/file/text.txt").
+;; ;;  - a list that can display an random banner,
+;; ;;    supported values are: string (filepath), 'official, 'logo and integers.
+
+;; ;; Content is not centered by default. To center, set
+;; (setq dashboard-center-content t)
+;; ;; vertically center content
+;; (setq dashboard-vertically-center-content t)
+
+;; (setq dashboard-items '((recents   . 5)
+;;                         (bookmarks . 5)
+;;                         (projects  . 5)
+;;                         (agenda    . 5)
+;;                         (registers . 5)))
+;; (setq dashboard-projects-backend 'projectile)
 (setq projectile-sort-order 'recentf)
 
 
@@ -1247,10 +1273,10 @@ _t_: Text [cite/text/c:@key]
 (setq display-line-numbers-type 'relative)
 
 
-;; email
+;; ;; email
 
-;https://blog.bgcarlisle.com/2024/03/07/how-to-set-up-mu4e-to-work-with-protonmail-bridge/
-;; This loads mu4e
+;; ;https://blog.bgcarlisle.com/2024/03/07/how-to-set-up-mu4e-to-work-with-protonmail-bridge/
+;; ;; This loads mu4e
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/elpa/mu4e-1.8.14")
 (require 'mu4e)
 
@@ -1358,7 +1384,7 @@ mu4e-compose-signature
           (:name "drafts" :query "tag:draft" :key "d")))
 
 
-;; respose to referees
+;; response to referees
 
 
 (defun wrap-paragraph-with-revcom ()
@@ -1390,7 +1416,7 @@ mu4e-compose-signature
       (goto-char start)
       (insert "\\begin{response}"))))
 
-b
+
 (defun wrap-region-with-response (start end)
   "Wrap the selected region with \\begin{opendel} and \\end{opendel}."
   (interactive "r")
@@ -1431,3 +1457,171 @@ Respond to referees:
 ;; Bind the Hydra to C-c 9
 (global-set-key (kbd "C-c 9") 'hydra-respond-to-referees/body)
 
+
+;; denote menu
+
+(transient-define-prefix mh/denote-transient ()
+  "Denote"
+  [["Common Denote Commands"
+    ("n" "new note" denote)
+    ("j" "journal" denote-journal-extras-new-or-existing-entry)
+    ("l"  "link, create" denote-link-or-create)
+    ("r"  "rename-note" denote-rename-file)
+    ]
+    ])
+
+
+(global-set-key (kbd "C-c d" ) 'mh/denote-transient)
+
+;; powerthesaurus
+
+(transient-define-prefix my/powerthesaurus ()
+  "Power Thesaurus Menu (Minimal)"
+  [["Queries"
+    ("s" "Synonyms" powerthesaurus-lookup-synonyms-dwim)
+    ("a" "Antonyms" powerthesaurus-lookup-antonyms-dwim)
+    ;; Remove or comment out anything that errors
+    ;; ("r" "Related" nil) ;; ← causes the transient error
+    ]])
+
+(global-set-key (kbd "C-c t") #'my/powerthesaurus)
+
+
+;; upper bound
+
+;; text manipulation
+;; https://www.cyan.sh/blog/posts/architecting-a-better-org-workflow.html 
+  (defun mark-whole-word ()
+  "Marks the whole word underneath the cursor."
+  (interactive)
+  (forward-word)
+  (set-mark-command nil)
+  (backward-word))
+
+
+  (interactive)
+  (forward-sentence)
+  (set-mark-command nil)
+  (backward-sentence))
+
+
+(defun break-out-sentence ()
+  "Breaks a sentence out into it's own buffer for editing."
+  (interactive)
+  (backward-sentence)
+  (kill-sentence)
+  (let ((buf (generate-new-buffer "*break-out*"))
+      (window (split-window-below -10)))
+    (set-window-buffer window buf)
+    (select-window window))
+  (erase-buffer)
+  (yank)
+  (org-mode))
+
+
+(defun move-sentence-right (&optional arg)
+  "Moves the whole sentence to the right of the next sentence."
+  (interactive "^p")
+  (or arg (setq arg 1))
+  (while (> arg 0)
+    (forward-sentence)
+    (backward-sentence)
+    (left-char) ;; Capture previous space
+    (kill-sentence)
+    (forward-sentence)
+    (yank)
+    (backward-sentence)
+    (setq arg (1- arg))))
+
+(defun move-sentence-left (&optional arg)
+  "Moves the whole sentence to the left of the previous sentence."
+  (interactive "^p")
+  (or arg (setq arg 1))
+  (while (> arg 0)
+    (forward-sentence)
+    (backward-sentence)
+    (left-char) ;; Capture previous space
+    (kill-sentence)
+    (backward-sentence)
+    (left-char) ;; Capture previous space
+    (yank)
+    (backward-sentence)
+    (setq arg (1- arg))))
+
+(defun move-paragraph-up (&optional arg)
+  "Moves the whole paragraph above the previous paragraph."
+  (interactive "^p")
+  (or arg (setq arg 1))
+  (while (> arg 0)
+    (forward-paragraph)
+    (backward-paragraph)
+    (kill-paragraph nil)
+    (backward-paragraph)
+    (yank)
+    (backward-paragraph)
+    (setq arg (1- arg))))
+
+(defun move-paragraph-down (&optional arg)
+  "Moves the whole paragraph above the previous paragraph."
+  (interactive "^p")
+  (or arg (setq arg 1))
+  (while (> arg 0)
+    (forward-paragraph)
+    (backward-paragraph)
+    (kill-paragraph nil)
+    (forward-paragraph)
+    (yank)
+    (backward-paragraph)
+    (setq arg (1- arg))))
+
+(define-key org-mode-map (kbd "C-M-<left>") #'move-sentence-left)
+(define-key org-mode-map (kbd "C-M-<right>") #'move-sentence-right)
+(define-key org-mode-map (kbd "C-M-<up>") #'move-paragraph-up)
+(define-key org-mode-map (kbd "C-M-<down>") #'move-paragraph-down)
+
+(define-key org-mode-map (kbd "C-@") #'mark-whole-word)
+(define-key org-mode-map (kbd "M-@") #'mark-sentence)
+
+
+(require 'transient)
+
+(transient-define-prefix reorder-transient ()
+  "Transient menu for text re-ordering commands."
+  ["Move sentence..." ("l" "Left" move-sentence-left)
+   ("r" "Right" move-sentence-right)]
+  ["Move paragraph..." ("u" "Up" move-paragraph-up)
+   ("d" "Down" move-paragraph-down)])
+
+(transient-define-prefix mark-menu-transient ()
+  "Transient menu for marking units of text."
+  ["Mark" ("w" "Word" mark-whole-word)
+   ("s" "Sentence" mark-sentence)
+   ("p" "Paragraph" mark-paragraph)
+   ("b" "Buffer" mark-whole-buffer)])
+
+(define-key org-mode-map (kbd "C-c o SPC") #'mark-menu-transient)
+(define-key org-mode-map (kbd "C-c o r") #'reorder-transient)
+
+;; passive to active
+(defun my/convert-passive-to-active ()
+  "Convert the current sentence from passive to active voice using Ollama and clean output."
+  (interactive)
+  (require 'thingatpt)
+  (let* ((sentence (thing-at-point 'sentence t))
+         (prompt (format "Convert this sentence from passive to active voice:\n\n\"%s\"" sentence))
+         (raw-response (with-temp-buffer
+                         (call-process-shell-command
+                          (format "echo %S | ollama run llama3" prompt)
+                          nil t)
+                         (buffer-string)))
+         ;; STRIP full ANSI escape sequences including ESC [?25l etc.
+         (clean-response (replace-regexp-in-string
+                          "\x1b\\[[0-9;?]*[ -/]*[@-~]" "" raw-response))
+         ;; extract the first quoted sentence if possible
+         (extracted (if (string-match "\"\\([^\"]+\\)\"" clean-response)
+                        (match-string 1 clean-response)
+                      (string-trim clean-response))))
+    (save-excursion
+      (backward-sentence)
+      (kill-sentence)
+      (insert extracted))))
