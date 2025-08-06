@@ -1316,7 +1316,7 @@ _t_: Text [cite/text/c:@key]
 
 ;; maildirs
 (setq mu4e-maildir-shortcuts
-  '( (:maildir "/Inbox"     :key  ?i)
+  '( (:maildir "/INBOX"     :key  ?i)
      (:maildir "/All mail"  :key  ?a)
      (:maildir "/Folders/Work"    :key  ?w)))
 
@@ -1334,7 +1334,7 @@ mu4e-compose-signature
 
 (setq mu4e-bookmarks
   '((:name  "Unread messages"
-     :query "flag:unread and maildir:/Inbox"
+     :query "flag:unread and maildir:/INBOX"
      :key   ?u)
     (:name  "Today's messages"
      :query "date:today..now"
@@ -1499,10 +1499,6 @@ Respond to referees:
   (backward-word))
 
 
-  (interactive)
-  (forward-sentence)
-  (set-mark-command nil)
-  (backward-sentence))
 
 
 (defun break-out-sentence ()
@@ -1625,3 +1621,35 @@ Respond to referees:
       (backward-sentence)
       (kill-sentence)
       (insert extracted))))
+
+;; semantic lines
+;; https://github.com/rlridenour/emacs-elpaca-config?tab=readme-ov-file#teaching
+ (defun my/wrap-at-sentences ()
+   "Fills the current paragraph, but starts each sentence on a new line."
+   (interactive)
+   (save-excursion
+     ;; Select the entire paragraph.
+     (mark-paragraph)
+     ;; Move to the start of the paragraph.
+     (goto-char (region-beginning))
+     ;; Record the location of the end of the paragraph.
+     (setq end-of-paragraph (region-end))
+     ;; Wrap lines with hard newlines.
+     (let ((use-hard-newlines 't))
+	;; Loop over each sentence in the paragraph.
+	(while (< (point) end-of-paragraph)
+	  ;; Move to end of sentence.
+	  (forward-sentence)
+	  ;; Delete spaces after sentence.
+	  (just-one-space)
+	  ;; Delete preceding space.
+	  (delete-char -1)
+	  ;; Insert a newline before the next sentence.
+	  (insert "\n")
+	  ))))
+
+
+;; swiper
+(use-package swiper
+  :ensure t
+  :bind (("C-s" . swiper)))
