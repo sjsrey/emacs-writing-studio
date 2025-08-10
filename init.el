@@ -1735,7 +1735,7 @@ Respond to referees:
 ;; Note that this file does not define any auto-expanding YaSnippets.
 
 ;; Install use-package
-(package-install 'use-package)
+; (package-install 'use-package)
 
 ;; AucTeX settings - almost no changes
 (use-package latex
@@ -1929,4 +1929,14 @@ Respond to referees:
 
 
 ;; dark pdf
-(setq pdf-view-midnight-colors '("#f8f8f2" . "#282a36"))
+
+(defun my/pdf-dark-mode-by-time ()
+  "Enable PDF dark mode at night."
+  (let ((hour (string-to-number (format-time-string "%H"))))
+    (setq pdf-view-midnight-colors '("#f8f8f2" . "#282a36"))
+    (if (or (< hour 7) (>= hour 19))
+        (pdf-view-midnight-minor-mode 1)
+      (pdf-view-midnight-minor-mode -1))))
+
+(add-hook 'pdf-view-mode-hook #'my/pdf-dark-mode-by-time)
+(define-key pdf-view-mode-map (kbd "M-d") #'pdf-view-midnight-minor-mode)
