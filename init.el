@@ -725,7 +725,7 @@
                                           (tags "week")
                                           (org-deadline-warning-days 0) ))
      ("N" . "Next granular")
-     ("Nb" tags-todo "+TODO=\"NEXT\"+boo")
+     ("Nb" tags-todo "+TODO=\"NEXT\"+books")
      ("Nc" tags-todo "+TODO=\"NEXT\"+cou")
      ("Nd" tags-todo "+TODO=\"NEXT\"+dev")
      ("Ne" tags-todo "+TODO=\"NEXT\"+emacs")
@@ -871,8 +871,10 @@
 ;;   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
 (setq org-agenda-files
-      '("~/Documents/org/tasks/books.org"
+      '("~/Documents/org/tasks/advising.org"
+        "~/Documents/org/tasks/books.org"
         "~/Documents/org/tasks/cogs.org"
+        "~/Documents/org/tasks/courses.org"
         "~/Documents/org/tasks/development.org"
 	"~/Documents/org/tasks/emacs.org"
         "~/Documents/org/tasks/family.org"
@@ -883,7 +885,6 @@
         "~/Documents/org/tasks/reyos.org"
         "~/Documents/org/tasks/service.org"
         "~/Documents/org/tasks/talks.org"
-        "~/Documents/org/tasks/teaching.org"
         "~/Documents/org/habits.org"
         ))
 
@@ -902,7 +903,8 @@
     _e_ emacs
     _f_ family
     _g_ grants
-    _l_ teaching
+    _a_ advising
+    _l_ courses
     _m_ manuscripts
     _o_ reyos
     _p_ proposals
@@ -913,13 +915,14 @@
     _q_ quit
     ^────────-----
     "
+  ("a" (find-file "/home/serge/Documents/org/tasks/advising.org"))
   ("b" (find-file "/home/serge/Documents/org/tasks/books.org"))
   ("c" (find-file "/home/serge/Documents/org/tasks/cogs.org"))
   ("d" (find-file "/home/serge/Documents/org/tasks/development.org"))
   ("e" (find-file "/home/serge/Documents/org/tasks/emacs.org"))
   ("f" (find-file "/home/serge/Documents/org/tasks/family.org"))
   ("g" (find-file "/home/serge/Documents/org/tasks/grants.org"))
-  ("l" (find-file "/home/serge/Documents/org/tasks/teaching.org"))
+  ("l" (find-file "/home/serge/Documents/org/tasks/courses.org"))
   ("m" (find-file "/home/serge/Documents/org/tasks/manuscripts.org"))
   ("o" (find-file "/home/serge/Documents/org/tasks/reyos.org"))
   ("p" (find-file "/home/serge/Documents/org/tasks/proposals.org"))
@@ -1921,7 +1924,6 @@ Respond to referees:
     (if (bound-and-true-p cdlatex-mode)
         (cdlatex-tab)
       (org-table-next-field))))
-(put 'LaTeX-narrow-to-environment 'disabled nil)
 
 
 (add-hook 'LaTeX-mode-hook #'turn-on-reftex)
@@ -1940,3 +1942,41 @@ Respond to referees:
 
 (add-hook 'pdf-view-mode-hook #'my/pdf-dark-mode-by-time)
 (define-key pdf-view-mode-map (kbd "M-d") #'pdf-view-midnight-minor-mode)
+(put 'LaTeX-narrow-to-environment 'disabled nil)
+
+
+;; debugging failing mu4e links
+(with-eval-after-load 'org
+  (or (require 'org-mu4e nil t)
+      (require 'mu4e-org nil t)))
+
+(with-eval-after-load 'mu4e
+  (require 'mu4e-server)
+  (when (fboundp 'mu4e--init-handlers)
+    (mu4e--init-handlers)))
+(with-eval-after-load 'org
+  (or (require 'org-mu4e nil t)
+      (require 'mu4e-org nil t)))
+
+;; refile uses prepend
+(setq org-reverse-note-order t)
+
+;; Move a just-completed TODO to the bottom of its siblings (project subtree)
+(defun my/org-move-done-to-bottom (&rest _ignore)
+  (when (and (derived-mode-p 'org-mode)
+             (not (bound-and-true-p org-capture-mode))   ; don't shuffle during capture
+             (boundp 'org-state)
+	     (member org-state org-done-keywords)
+             (> (or (org-current-level) 0) 1))           ; only children (level>1); remove if you want top-level too
+    (save-excursion
+      (org-back-to-heading t)
+      ;; Keep moving this subtree down until it's the last sibling
+      (let ((keep t))
+	(while keep
+          (setq keep (condition-case nil
+                         (progn (org-move-subtree-down) t)
+                       (error nil))))))
+    
+    ))
+
+(add-hook 'org-after-todo-state-change-hook #'my/org-move-done-to-bottom)
