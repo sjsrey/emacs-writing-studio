@@ -1334,3 +1334,17 @@ _t_: Text [cite/text/c:@key]
           #'TeX-revert-document-buffer)
 
 (setq TeX-command-extra-options "-synctex=1")
+
+;; cdlatex
+(use-package cdlatex
+  :hook ((LaTeX-mode . turn-on-cdlatex)
+         (org-mode . turn-on-org-cdlatex)))  ;; Optional: also works in Org
+
+;; reftex
+(add-hook 'LaTeX-mode-hook 'turn-on-reftex) ;; Enable RefTeX in LaTeX
+(setq reftex-plug-into-AUCTeX t)            ;; Integrate with AUCTeX
+
+(use-package reftex
+  :hook (LaTeX-mode . turn-on-reftex)
+  :config
+  (setq reftex-plug-into-AUCTeX t))
