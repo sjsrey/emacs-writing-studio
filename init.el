@@ -881,7 +881,7 @@
 (defhydra hydra-jump-to-project-vertical (:hint nil)
  "
   ^
-    ^Projects
+    ^Project
     ^─────────-----
     _b_ books
     _c_ cogs
@@ -900,19 +900,19 @@
     _q_ quit
     ^────────-----
     "
-  ("b" (find-file "/home/serge/Documents/org/tasks/books.org"))
-  ("c" (find-file "/home/serge/Documents/org/tasks/cogs.org"))
-  ("d" (find-file "/home/serge/Documents/org/tasks/development.org"))
-  ("e" (find-file "/home/serge/Documents/org/tasks/emacs.org"))
-  ("f" (find-file "/home/serge/Documents/org/tasks/family.org"))
-  ("g" (find-file "/home/serge/Documents/org/tasks/grants.org"))
-  ("l" (find-file "/home/serge/Documents/org/tasks/teaching.org"))
-  ("m" (find-file "/home/serge/Documents/org/tasks/manuscripts.org"))
-  ("o" (find-file "/home/serge/Documents/org/tasks/reyos.org"))
-  ("p" (find-file "/home/serge/Documents/org/tasks/proposals.org"))
-  ("r" (find-file "/home/serge/Documents/org/tasks/reviews.org"))
-  ("s" (find-file "/home/serge/Documents/org/tasks/service.org"))
-  ("t" (find-file "/home/serge/Documents/org/tasks/talks.org"))
+  ("b" (find-file "~/Documents/org/tasks/books.org"))
+  ("c" (find-file "~/Documents/org/tasks/cogs.org"))
+  ("d" (find-file "~/Documents/org/tasks/development.org"))
+  ("e" (find-file "~/Documents/org/tasks/emacs.org"))
+  ("f" (find-file "~/Documents/org/tasks/family.org"))
+  ("g" (find-file "~/Documents/org/tasks/grants.org"))
+  ("l" (find-file "~/Documents/org/tasks/teaching.org"))
+  ("m" (find-file "~/Documents/org/tasks/manuscripts.org"))
+  ("o" (find-file "~/Documents/org/tasks/reyos.org"))
+  ("p" (find-file "~/Documents/org/tasks/proposals.org"))
+  ("r" (find-file "~/Documents/org/tasks/reviews.org"))
+  ("s" (find-file "~/Documents/org/tasks/service.org"))
+  ("t" (find-file "~/Documents/org/tasks/talks.org"))
 
   ("q" nil :color blue)) ; Add :color blue
 
@@ -948,7 +948,7 @@
   (add-to-list 'yas-snippet-dirs (expand-file-name "~/.emacs.d/etc/yasnippet/snippets"))
 
    :requires yasnippet)
-(add-hook 'emacs-startup-hook (lambda () (yas-load-directory "/home/serge/.emacs.d/etc/yasnippet/snippets")))
+(add-hook 'emacs-startup-hook (lambda () (yas-load-directory "/Users/serge/.emacs.d/etc/yasnippet/snippets")))
 
 ;; org-download
 (require 'org-download)
@@ -1055,8 +1055,8 @@
     (set-face-foreground 'highlight-indent-guides-character-face "white")
     (setq highlight-indent-guides-method 'character))
 
-  (setenv "PATH" (concat (getenv "PATH") ":/home/serge/mambaforge/bin"))
-  (add-to-list 'exec-path "/home/serge/mambaforge/bin")
+  (setenv "PATH" (concat (getenv "PATH") ":/Users/serge/mambaforge/bin"))
+  (add-to-list 'exec-path "/Users/serge/mambaforge/bin")
 
 (setq python-shell-interpreter "ipython")
 
@@ -1075,3 +1075,262 @@
 
 (use-package company-box
   :hook (company-mode . company-box-mode))
+
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               '((python-mode) . ("pylsp"))))
+
+
+
+;; respose to referees
+
+
+(defun wrap-paragraph-with-revcom ()
+  "Wrap the current paragraph in \\begin{revcom} and \\end{revcom}."
+  (interactive)
+  (save-excursion
+    ;; Mark the current paragraph as the region
+    (mark-paragraph)
+    (let ((start (region-beginning))
+          (end (region-end)))
+      ;; Insert the LaTeX environment
+      (goto-char end)
+      (insert "\\end{revcom}")
+      (goto-char start)
+      (insert "\\begin{revcom}"))))
+
+
+(defun wrap-paragraph-with-response ()
+  "Wrap the current paragraph in \\begin{response} and \\end{response}."
+  (interactive)
+  (save-excursion
+    ;; Mark the current paragraph as the region
+    (mark-paragraph)
+    (let ((start (region-beginning))
+          (end (region-end)))
+      ;; Insert the LaTeX environment
+      (goto-char end)
+      (insert "\\end{response}")
+      (goto-char start)
+      (insert "\\begin{response}"))))
+
+
+(defun wrap-region-with-response (start end)
+  "Wrap the selected region with \\begin{opendel} and \\end{opendel}."
+  (interactive "r")
+  (save-excursion
+    (goto-char end)
+    (insert "\\end{response}")
+    (goto-char start)
+    (insert "\\begin{response}")))
+
+
+(defun wrap-region-with-revcom (start end)
+  "Wrap the selected region with \\begin{opendel} and \\end{opendel}."
+  (interactive "r")
+  (save-excursion
+    (goto-char end)
+    (insert "\\end{revcom}")
+    (goto-char start)
+    (insert "\\begin{revcom}")))
+
+
+(require 'hydra)
+
+(defhydra hydra-respond-to-referees (:color blue :hint nil)
+  "
+Respond to referees:
+[_r_] Wrap paragraph with \\begin{revcom} ... \\end{revcom}
+[_p_] Wrap paragraph with \\begin{response} ... \\end{response}
+[_R_] Wrap region with \\begin{response} ... \\end{response}
+[_P_] Wrap region with \\begin{revcom} ... \\end{revcom}
+[_q_] Quit
+"
+  ("r" wrap-paragraph-with-revcom)
+  ("p" wrap-paragraph-with-response)
+  ("R" wrap-region-with-response)
+  ("P" wrap-region-with-revcom)
+  ("q" nil "quit"))
+
+;; Bind the Hydra to C-c 9
+(global-set-key (kbd "C-c 9") 'hydra-respond-to-referees/body)
+
+
+;; dashboard
+;; use-package with package.el:
+(use-package dashboard
+  :config
+  (dashboard-setup-startup-hook))
+
+;; Set the title
+(setq dashboard-banner-logo-title "Welcome to Emacs Dashboard")
+;; Set the banner
+(setq dashboard-startup-banner 'official)
+;; Value can be:
+;;  - 'official which displays the official emacs logo.
+;;  - 'logo which displays an alternative emacs logo.
+;;  - an integer which displays one of the text banners
+;;    (see dashboard-banners-directory files).
+;;  - a string that specifies a path for a custom banner
+;;    currently supported types are gif/image/text/xbm.
+;;  - a cons of 2 strings which specifies the path of an image to use
+;;    and other path of a text file to use if image isn't supported.
+;;    ("path/to/image/file/image.png" . "path/to/text/file/text.txt").
+;;  - a list that can display an random banner,
+;;    supported values are: string (filepath), 'official, 'logo and integers.
+
+;; Content is not centered by default. To center, set
+(setq dashboard-center-content t)
+;; vertically center content
+(setq dashboard-vertically-center-content t)
+
+(setq dashboard-items '((recents   . 5)
+                        (bookmarks . 5)
+                        (projects  . 5)
+                        (agenda    . 5)
+                        (registers . 5)))
+(setq dashboard-projects-backend 'projectile)
+(setq projectile-sort-order 'recentf)
+
+
+;; global key bindings
+(global-set-key (kbd "M-s M-b") #'consult-buffer)
+
+;; ellama
+
+(defhydra hydra-ellama (:color blue :hint nil)
+  "
+Ellama Commands
+---------------------------------------------
+[_C_] Chat 
+[_c_] Improve conciseness
+[_d_] Define word
+[_g_] Improve grammar  in region or buffer
+[_r_] Code review
+[_s_] Summarize region or buffer
+[_w_] Improve wording in region or buffer
+[_q_] Quit Hydra
+"
+  ("C" ellama-chat)
+  ("c" ellama-improve-conciseness)
+  ("d" ellama-define-word)
+  ("g" ellama-improve-grammar)
+  ("r" ellama-code-review)
+  ("s" ellama-summarize)
+  ("w" ellama-improve-wording)
+  ("q" ni: exit t))
+
+(global-set-key (kbd "C-c 2") 'hydra-ellama/body)
+
+
+;; in-line html export
+; https://www.reddit.com/r/orgmode/comments/7dyywu/creating_a_selfcontained_html/
+
+(defun replace-in-string (what with in)
+  (replace-regexp-in-string (regexp-quote what) with in nil 'literal))
+
+(defun org-html--format-image (source attributes info)
+  (progn
+    (setq source (replace-in-string "%20" " " source))
+    (format "<img src=\"data:image/%s;base64,%s\"%s />"
+            (or (file-name-extension source) "")
+            (base64-encode-string
+             (with-temp-buffer
+               (insert-file-contents-literally source)
+              (buffer-string)))
+            (file-name-nondirectory source))
+    ))
+
+
+;; jump to matching paren
+(global-set-key (kbd "C-c m") 'forward-sexp)
+(global-set-key (kbd "C-c M") 'backward-sexp)
+
+;; org-protocol
+(require 'server)
+(unless (server-running-p)
+  (server-start))
+
+;; citation styles
+(defhydra hydra-org-cite-toggle (:hint nil)
+  "
+Toggle Org-Cite Format:
+_n_: Normal [cite:@key]
+_t_: Text [cite/text/c:@key]
+"
+  ("n" (progn (search-backward "[cite/text/c:@" nil t)
+              (replace-match "[cite:@")))
+  ("t" (progn (search-backward "[cite:@" nil t)
+              (replace-match "[cite/text/c:@")))
+  ("q" nil "quit"))
+
+(global-set-key (kbd "C-c o c") 'hydra-org-cite-toggle/body)
+
+;; return
+(setq org-return-follows-link t)
+
+;; md export
+(require 'ox-md)
+
+;; scratch buffer
+(defun jump-to-scratch-buffer ()
+  "Jump to the *scratch* buffer, creating it if it doesn't exist."
+  (interactive)
+  (switch-to-buffer (get-buffer-create "*scratch*")))
+
+(global-set-key (kbd "C-c s") 'jump-to-scratch-buffer)
+
+;; line numbers
+(global-set-key (kbd "C-c l") 'display-line-numbers-mode)
+(setq display-line-numbers-type 'relative)
+
+;; latex
+(add-to-list 'exec-path "/Library/TeX/texbin")
+(setenv "PATH" (concat "/Library/TeX/texbin:" (getenv "PATH")))
+
+
+;; AucTeX
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
+(setq-default TeX-master nil)
+(add-hook 'LaTeX-mode-hook 'visual-line-mode)
+(add-hook 'LaTeX-mode-hook 'flyspell-mode)
+(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+(setq reftex-plug-into-AUCTeX t)
+(setq TeX-PDF-mode t)
+
+;; Use Skim as viewer, enable source <-> PDF sync
+;; make latexmk available via C-c C-c
+;; Note: SyncTeX is setup via ~/.latexmkrc (see below)
+;; (add-hook 'LaTeX-mode-hook (lambda ()
+;;   (push
+;;     '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
+;;       :help "Run latexmk on file")
+;;     TeX-command-list)))
+;; (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk")))
+
+;; ;; use Skim as default pdf viewer
+;; ;; Skim's displayline is used for forward search (from .tex to .pdf)
+;; ;; option -b highlights the current line; option -g opens Skim in the background  
+;; (setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
+;; (setq TeX-view-program-list
+;;      '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
+
+
+
+
+(use-package pdf-tools
+  :ensure t
+  :config
+  (pdf-tools-install)
+  (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode)))
+
+(setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+      TeX-source-correlate-start-server t
+      TeX-PDF-mode t)
+
+(add-hook 'TeX-after-compilation-finished-functions
+          #'TeX-revert-document-buffer)
+
+(setq TeX-command-extra-options "-synctex=1")
